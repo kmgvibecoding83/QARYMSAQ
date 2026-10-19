@@ -9,7 +9,289 @@
 <meta property="og:description" content="Найдите медиа-специалиста или разместите заказ бесплатно.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="">
-<link rel="stylesheet" href="styles.css">
+<style>
+/* ===== Дизайн-система MediaHub ===== */
+:root {
+  --bg: #fafaf9;
+  --surface: #ffffff;
+  --surface-2: #f2f1ef;
+  --text: #1c1b1a;
+  --muted: #6b6864;
+  --line: #e4e2de;
+  --accent: #d9480f;
+  --accent-ink: #ffffff;
+  --accent-soft: #fff0e8;
+  --ok: #2b8a3e;
+  --ok-soft: #e6f4ea;
+  --warn: #8a5a00;
+  --warn-soft: #fff6dd;
+  --danger: #c92a2a;
+  --star: #f59f00;
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 6px 24px rgba(0,0,0,.06);
+  --font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #121212; --surface: #1b1b1b; --surface-2: #252525; --text: #f1efec; --muted: #a29e98;
+    --line: #313131; --accent: #ff7a3d; --accent-ink: #1a0d06; --accent-soft: #3a2014;
+    --ok: #69db7c; --ok-soft: #1c3322; --warn: #ffd43b; --warn-soft: #3a3115; --danger: #ff6b6b;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 24px rgba(0,0,0,.35);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #121212; --surface: #1b1b1b; --surface-2: #252525; --text: #f1efec; --muted: #a29e98;
+  --line: #313131; --accent: #ff7a3d; --accent-ink: #1a0d06; --accent-soft: #3a2014;
+  --ok: #69db7c; --ok-soft: #1c3322; --warn: #ffd43b; --warn-soft: #3a3115; --danger: #ff6b6b;
+  --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 24px rgba(0,0,0,.35);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.55 var(--font); min-height: 100vh; display: flex; flex-direction: column; }
+main { flex: 1; outline: none; }
+img { max-width: 100%; display: block; }
+a { color: inherit; }
+h1, h2, h3 { line-height: 1.2; margin: 0 0 .6em; letter-spacing: -.01em; }
+h1 { font-size: clamp(26px, 5vw, 44px); }
+h2 { font-size: clamp(20px, 3vw, 26px); }
+h3 { font-size: 17px; }
+p { margin: 0 0 1em; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 16px; }
+.sec { padding: 36px 16px; }
+.sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.sec-head h2 { margin: 0; }
+.skip { position: absolute; left: -999px; }
+.skip:focus { left: 12px; top: 12px; z-index: 99; background: var(--surface); padding: 8px 12px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Кнопки и поля */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid transparent; background: var(--accent); color: var(--accent-ink); padding: 10px 18px; border-radius: 999px; font: inherit; font-weight: 600; cursor: pointer; text-decoration: none; white-space: nowrap; }
+.btn:hover { filter: brightness(1.06); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-ghost { background: transparent; color: var(--text); border-color: var(--line); }
+.btn-ghost:hover { background: var(--surface-2); filter: none; }
+.btn-danger { background: transparent; color: var(--danger); border-color: var(--line); }
+.btn-sm { padding: 6px 13px; font-size: 14px; }
+.btn-block { width: 100%; }
+.link-btn { background: none; border: 0; padding: 0; font: inherit; color: var(--muted); cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+.link-btn:hover { color: var(--text); }
+label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.field { margin-bottom: 14px; }
+.hint { font-size: 12px; color: var(--muted); margin-top: 4px; font-weight: 400; }
+input[type=text], input[type=email], input[type=password], input[type=number], input[type=url], input[type=date], input[type=search], select, textarea {
+  width: 100%; font: inherit; color: var(--text); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 9px 11px;
+}
+textarea { min-height: 110px; resize: vertical; }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.check { display: flex; align-items: center; gap: 8px; font-weight: 400; font-size: 14px; cursor: pointer; margin-bottom: 6px; }
+.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+.row { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .row-2 { grid-template-columns: 1fr 1fr; } .row-3 { grid-template-columns: 1fr 1fr 1fr; } }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-block; padding: 3px 10px; border-radius: 999px; background: var(--surface-2); font-size: 13px; }
+.chip-check { position: relative; }
+.chip-check input { position: absolute; opacity: 0; }
+.chip-check span { display: inline-block; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--line); font-size: 13px; font-weight: 500; cursor: pointer; }
+.chip-check input:checked + span { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.chip-check input:focus-visible + span { outline: 2px solid var(--accent); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; }
+.panel + .panel { margin-top: 16px; }
+.notice { padding: 10px 14px; border-radius: var(--radius-sm); background: var(--warn-soft); color: var(--text); font-size: 14px; border-left: 3px solid var(--warn); margin-bottom: 16px; }
+.notice-ok { background: var(--ok-soft); border-left-color: var(--ok); }
+.empty { text-align: center; padding: 40px 16px; color: var(--muted); }
+.pill { display: inline-block; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 600; background: var(--surface-2); color: var(--muted); }
+.pill-ok { background: var(--ok-soft); color: var(--ok); }
+.pill-accent { background: var(--accent-soft); color: var(--accent); }
+.pill-warn { background: var(--warn-soft); color: var(--warn); }
+.pill-danger { background: transparent; color: var(--danger); border: 1px solid currentColor; }
+.verified { color: var(--accent); font-size: 14px; }
+.stars { color: var(--star); letter-spacing: 1px; }
+.badge { position: absolute; top: -3px; right: -3px; min-width: 17px; height: 17px; padding: 0 4px; border-radius: 9px; background: var(--accent); color: var(--accent-ink); font-size: 11px; font-weight: 700; display: grid; place-items: center; }
+
+/* Хедер */
+.hdr { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+.hdr-in { display: flex; align-items: center; gap: 16px; height: 62px; }
+.logo { font-size: 21px; font-weight: 500; text-decoration: none; letter-spacing: -.02em; }
+.logo b { color: var(--accent); font-weight: 800; }
+.nav { display: none; gap: 20px; align-items: center; margin-left: 12px; }
+.nav a:not(.btn) { text-decoration: none; color: var(--muted); font-weight: 500; }
+.nav a:not(.btn):hover, .nav a.active { color: var(--text); }
+.hdr-act { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.icon-btn { position: relative; width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; border: 0; background: transparent; color: var(--text); font-size: 17px; cursor: pointer; text-decoration: none; }
+.icon-btn:hover { background: var(--surface-2); }
+.menu { position: relative; }
+.menu summary { list-style: none; cursor: pointer; border-radius: 50%; }
+.menu summary::-webkit-details-marker { display: none; }
+.menu-pop { position: absolute; right: 0; top: 46px; width: 240px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); padding: 8px; z-index: 30; }
+.menu-pop a, .menu-pop button { display: block; width: 100%; text-align: left; padding: 8px 10px; border-radius: 8px; text-decoration: none; background: none; border: 0; font: inherit; color: var(--text); cursor: pointer; }
+.menu-pop a:hover, .menu-pop button:hover { background: var(--surface-2); }
+.menu-pop hr { border: 0; border-top: 1px solid var(--line); margin: 6px 0; }
+.menu-who { padding: 8px 10px; }
+.burger { display: grid; }
+.nav.open { display: flex; position: absolute; top: 62px; left: 0; right: 0; flex-direction: column; align-items: stretch; background: var(--surface); border-bottom: 1px solid var(--line); padding: 12px 16px 16px; margin: 0; gap: 4px; }
+.nav.open a { padding: 10px 0; }
+@media (min-width: 860px) { .nav, .nav.open { display: flex; position: static; flex-direction: row; padding: 0; border: 0; background: none; margin-left: 12px; } .nav.open a { padding: 0; } .burger { display: none; } }
+
+/* Аватар */
+.ava { border-radius: 50%; object-fit: cover; flex: none; display: inline-grid; place-items: center; color: #fff; font-weight: 700; background: var(--muted); overflow: hidden; }
+
+/* Главная */
+.hero { padding: 56px 0 40px; background: radial-gradient(circle at 85% -10%, var(--accent-soft), transparent 55%); }
+.hero h1 span { color: var(--accent); }
+.lead { font-size: 17px; color: var(--muted); max-width: 620px; }
+.search { display: grid; grid-template-columns: 1fr; gap: 8px; background: var(--surface); padding: 8px; border-radius: 18px; border: 1px solid var(--line); box-shadow: var(--shadow); max-width: 720px; margin-top: 24px; }
+.search select, .search input { border: 0; background: var(--surface-2); }
+@media (min-width: 640px) { .search { grid-template-columns: 1.2fr 1fr 1fr auto; border-radius: 999px; } .search select, .search input { border-radius: 999px; } }
+.cats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+@media (min-width: 640px) { .cats { grid-template-columns: repeat(5, 1fr); } }
+.cat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 14px; text-decoration: none; display: flex; flex-direction: column; gap: 2px; transition: transform .15s, box-shadow .15s; }
+.cat:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.cat-ic { font-size: 28px; margin-bottom: 6px; }
+.cat small { color: var(--muted); }
+.steps { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 760px) { .steps { grid-template-columns: 1fr 1fr; } }
+.steps ol { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+.steps li { counter-increment: s; display: flex; gap: 12px; margin-bottom: 14px; }
+.steps li::before { content: counter(s); flex: none; width: 30px; height: 30px; border-radius: 50%; background: var(--accent-soft); color: var(--accent); font-weight: 700; display: grid; place-items: center; }
+.cta { background: var(--text); color: var(--bg); border-radius: 22px; padding: 36px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 16px; }
+.cta h2 { margin: 0 0 4px; }
+.cta p { margin: 0; opacity: .7; }
+
+/* Карточки специалистов */
+.grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); }
+.card { position: relative; background: var(--surface); border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); display: flex; flex-direction: column; }
+.card-cover { position: relative; aspect-ratio: 4 / 5; background: var(--surface-2); display: block; overflow: hidden; }
+.card-cover img { width: 100%; height: 100%; object-fit: cover; transition: transform .35s; }
+.card:hover .card-cover img { transform: scale(1.03); }
+.card-cover .pill { position: absolute; left: 10px; top: 10px; }
+.no-cover { width: 100%; height: 100%; display: grid; place-items: center; font-size: 42px; color: var(--muted); background: linear-gradient(135deg, var(--surface-2), var(--line)); }
+.fav { position: absolute; right: 10px; top: 10px; width: 34px; height: 34px; border-radius: 50%; border: 0; background: rgba(0,0,0,.35); color: #fff; font-size: 16px; cursor: pointer; z-index: 2; }
+.fav.on { background: var(--accent); color: #fff; }
+.card-body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.card-name { font-weight: 700; text-decoration: none; }
+.card-foot { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 8px; font-size: 14px; gap: 8px; }
+
+/* Каталог */
+.layout { display: grid; gap: 20px; grid-template-columns: 1fr; padding-top: 24px; padding-bottom: 40px; }
+@media (min-width: 900px) { .layout { grid-template-columns: 270px 1fr; } }
+.filters summary { font-weight: 700; cursor: pointer; padding: 4px 0; }
+@media (min-width: 900px) { .filters summary { display: none; } .filters > div { display: block !important; } }
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.toolbar select { width: auto; }
+
+/* Заказы */
+.order { display: block; text-decoration: none; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px 18px; transition: border-color .15s; }
+.order:hover { border-color: var(--accent); }
+.order + .order { margin-top: 10px; }
+.order h3 { margin: 4px 0 6px; }
+.order-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 14px; color: var(--muted); }
+.order-budget { font-weight: 700; color: var(--text); }
+.refs { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 8px; }
+.refs img { aspect-ratio: 1; object-fit: cover; border-radius: 10px; cursor: zoom-in; }
+.resp { border-top: 1px solid var(--line); padding: 14px 0; display: flex; gap: 12px; }
+.resp:first-of-type { border-top: 0; }
+.resp-body { flex: 1; min-width: 0; }
+.status-flow { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; font-size: 13px; }
+.status-flow .pill.on { background: var(--accent); color: var(--accent-ink); }
+
+/* Профиль */
+.prof-head { display: grid; gap: 20px; grid-template-columns: 1fr; padding: 28px 0 8px; }
+@media (min-width: 900px) { .prof-head { grid-template-columns: 1fr 340px; } }
+.prof-id { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; }
+.prof-id h1 { font-size: clamp(24px, 4vw, 34px); margin: 0; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; font-size: 14px; }
+.kv dt { color: var(--muted); }
+.kv dd { margin: 0; }
+.lock { text-align: center; padding: 18px; border: 1px dashed var(--line); border-radius: var(--radius-sm); color: var(--muted); }
+.tabs { display: flex; gap: 4px; overflow-x: auto; border-bottom: 1px solid var(--line); margin: 20px 0 16px; scrollbar-width: none; }
+.tabs a, .tabs button { padding: 10px 14px; text-decoration: none; color: var(--muted); font-weight: 600; border: 0; background: none; font: inherit; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.tabs .on { color: var(--text); border-bottom-color: var(--accent); }
+.masonry { columns: 2 160px; column-gap: 10px; }
+@media (min-width: 760px) { .masonry { columns: 3 220px; } }
+.masonry figure { margin: 0 0 10px; break-inside: avoid; position: relative; border-radius: 10px; overflow: hidden; background: var(--surface-2); cursor: zoom-in; }
+.masonry figure img { width: 100%; }
+.masonry .vid { aspect-ratio: 16/9; display: grid; place-items: center; background: #000 center/cover; color: #fff; font-size: 40px; }
+.masonry figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 18px 10px 8px; font-size: 13px; color: #fff; background: linear-gradient(transparent, rgba(0,0,0,.6)); }
+.review { padding: 14px 0; border-top: 1px solid var(--line); }
+.review:first-child { border-top: 0; }
+.reply { margin: 10px 0 0 16px; padding: 10px 12px; background: var(--surface-2); border-radius: var(--radius-sm); font-size: 14px; }
+
+/* Сообщения */
+.chat { display: grid; grid-template-columns: 1fr; height: calc(100vh - 62px - 40px); min-height: 480px; border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; background: var(--surface); margin: 20px 0; }
+@media (min-width: 800px) { .chat { grid-template-columns: 300px 1fr; } }
+.convs { border-right: 1px solid var(--line); overflow-y: auto; }
+.conv { display: flex; gap: 10px; align-items: center; padding: 12px 14px; text-decoration: none; border-bottom: 1px solid var(--line); }
+.conv.on { background: var(--surface-2); }
+.conv-txt { min-width: 0; flex: 1; }
+.conv-txt div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 13px; color: var(--muted); }
+.thread { display: flex; flex-direction: column; min-height: 0; }
+.thread-head { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+.msg { max-width: 78%; padding: 8px 12px; border-radius: 16px; background: var(--surface-2); align-self: flex-start; word-wrap: break-word; position: relative; }
+.msg.mine { align-self: flex-end; background: var(--accent); color: var(--accent-ink); }
+.msg time { display: block; font-size: 11px; opacity: .65; margin-top: 2px; }
+.msg img { border-radius: 10px; margin: 4px 0; max-height: 240px; cursor: zoom-in; }
+.msg .flag { position: absolute; right: -24px; top: 6px; background: none; border: 0; color: var(--muted); cursor: pointer; opacity: 0; }
+.msg:hover .flag, .msg .flag:focus { opacity: 1; }
+.composer { display: flex; gap: 8px; padding: 10px; border-top: 1px solid var(--line); align-items: flex-end; }
+.composer textarea { min-height: 42px; height: 42px; }
+.file-btn { flex: none; }
+@media (max-width: 799px) { .chat.has-thread .convs { display: none; } .chat:not(.has-thread) .thread { display: none; } }
+
+/* Таблицы (админка) */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; }
+.stat-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); margin-bottom: 20px; }
+.stat { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.stat b { display: block; font-size: 28px; }
+.bars { display: flex; align-items: flex-end; gap: 4px; height: 70px; }
+.bars span { flex: 1; background: var(--accent); border-radius: 3px 3px 0 0; min-height: 2px; opacity: .85; }
+
+/* Авторизация */
+.auth { max-width: 420px; margin: 40px auto; }
+.oauth { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.or { text-align: center; color: var(--muted); font-size: 13px; margin: 6px 0 14px; }
+.roles { display: grid; gap: 12px; grid-template-columns: 1fr; }
+@media (min-width: 560px) { .roles { grid-template-columns: 1fr 1fr; } }
+.role-card { text-align: left; padding: 22px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--surface); cursor: pointer; font: inherit; color: var(--text); }
+.role-card:hover { border-color: var(--accent); }
+.role-card b { display: block; font-size: 18px; margin: 8px 0 4px; }
+
+/* Футер */
+.ftr { border-top: 1px solid var(--line); margin-top: 40px; padding: 28px 0; font-size: 14px; color: var(--muted); }
+.ftr-in { display: flex; flex-wrap: wrap; gap: 12px 28px; justify-content: space-between; }
+.ftr a { color: var(--muted); }
+.ftr nav { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+
+/* Тосты, модалки */
+#toasts { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; flex-direction: column; gap: 8px; width: min(92vw, 420px); }
+.toast { background: var(--text); color: var(--bg); padding: 11px 16px; border-radius: 12px; box-shadow: var(--shadow); font-size: 14px; animation: up .2s ease-out; }
+.toast.err { background: var(--danger); color: #fff; }
+@keyframes up { from { transform: translateY(10px); opacity: 0; } }
+.overlay { position: fixed; inset: 0; z-index: 90; background: rgba(0,0,0,.6); display: grid; place-items: center; padding: 16px; }
+.dialog { background: var(--surface); border-radius: var(--radius); padding: 22px; width: min(100%, 480px); max-height: 90vh; overflow-y: auto; }
+.lightbox img, .lightbox iframe { max-width: 94vw; max-height: 86vh; border-radius: 10px; border: 0; }
+.lightbox iframe { width: min(94vw, 960px); aspect-ratio: 16/9; height: auto; }
+.lb-close { position: fixed; top: 14px; right: 18px; color: #fff; background: none; border: 0; font-size: 32px; cursor: pointer; }
+
+.prose { max-width: 760px; }
+.prose h2 { margin-top: 1.4em; }
+.mt { margin-top: 16px; }
+.flex { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.between { justify-content: space-between; }
+.right { margin-left: auto; }
+.pager { text-align: center; margin-top: 20px; }
+</style>
 <script>
   try { var t = localStorage.getItem('mediahub_theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
 </script>
@@ -21,6 +303,1161 @@
 <div id="footer"></div>
 <div id="toasts" aria-live="polite"></div>
 <div id="modal"></div>
-<script src="app.js"></script>
+<script>
+'use strict';
+/* MediaHub — MVP маркетплейса медиа-специалистов.
+   Клиентское SPA: данные хранятся в localStorage (см. README). */
+
+const DB_KEY = 'mediahub_db_kz1';
+const SES_KEY = 'mediahub_session';
+const THEME_KEY = 'mediahub_theme';
+const DAY = 864e5;
+const PAGE_SIZE = 12;
+const NOTIF_TYPES = { response: 'Новый отклик на заказ', message: 'Новое сообщение', invite: 'Приглашение к заказу', review: 'Новый отзыв' };
+const STATUS = { draft: 'Черновик', open: 'Открыт', selected: 'Исполнитель выбран', done: 'Завершён', cancelled: 'Отменён' };
+const SAFETY = 'Платформа не участвует в расчётах. Не вносите предоплату без договора.';
+
+/* ---------- утилиты ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const now = () => Date.now();
+const money =n => Number(n || 0).toLocaleString('ru-RU') + ' ₸';
+const fmtDate = t => t ? new Date(t).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+const fmtTime = t => new Date(t).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+const ago = t => { const d = (now() - t) / 1000; if (d < 60) return 'только что'; if (d < 3600) return Math.floor(d / 60) + ' мин назад'; if (d < 86400) return Math.floor(d / 3600) + ' ч назад'; return fmtDate(t); };
+const safeUrl = u => /^(https?:\/\/|data:image\/|data:application\/|data:text\/)/i.test(u || '') ? u : '#';
+const isoDate = t => t ? new Date(t).toISOString().slice(0, 10) : '';
+const lsGet = k => { try { return localStorage.getItem(k); } catch (e) { return null; } };
+const lsSet = (k, v) => { try { v == null ? localStorage.removeItem(k) : localStorage.setItem(k, v); return true; } catch (e) { return false; } };
+
+function hashPass(email, pass) {
+  const s = email.toLowerCase() + ':' + pass;
+  let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+  for (let i = 0; i < s.length; i++) { const ch = s.charCodeAt(i); h1 = Math.imul(h1 ^ ch, 2654435761); h2 = Math.imul(h2 ^ ch, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return (4294967296 * (2097151 & h2) + (h1 >>> 0)).toString(16);
+}
+
+/* ---------- данные ---------- */
+let db;
+function load() {
+  try { const raw = lsGet(DB_KEY); if (raw) return JSON.parse(raw); } catch (e) {}
+  const s = seed(); lsSet(DB_KEY, JSON.stringify(s)); return s;
+}
+function save() {
+  if (!lsSet(DB_KEY, JSON.stringify(db))) toast('Хранилище браузера переполнено — удалите часть файлов', true);
+}
+
+const userById = id => db.users.find(u => u.id === id);
+const profOf = id => db.profiles.find(p => p.userId === id);
+const profByName = n => db.profiles.find(p => p.username.toLowerCase() === String(n).toLowerCase());
+const catById = id => db.categories.find(c => c.id === id);
+const cityName = id => id === 'online' ? 'Онлайн' : (db.cities.find(c => c.id === id)?.name || '—');
+const orderById = id => db.orders.find(o => o.id === id);
+const visibleProfiles = () => db.profiles.filter(p => { const u = userById(p.userId); return u && !u.isBlocked; });
+const portfolioOf = id => db.portfolio.filter(x => x.userId === id).sort((a, b) => a.sort - b.sort);
+
+function me() {
+  const u = userById(lsGet(SES_KEY));
+  return u && !u.isBlocked ? u : null;
+}
+const isSpecMode = u => u && u.role === 'specialist';
+
+function fmtPrice(p) {
+  if (p.priceType === 'deal' || !p.priceFrom) return 'Договорная';
+  return 'от ' + money(p.priceFrom) + (p.priceType === 'hour' ? ' / час' : ' / проект');
+}
+function fmtBudget(o) {
+  if (o.budgetType === 'fixed') return money(o.budgetMin);
+  if (o.budgetType === 'range') return money(o.budgetMin).replace(' ₸', '') + ' – ' + money(o.budgetMax);
+  return 'Договорной';
+}
+function videoInfo(url) {
+  let m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|shorts\/|embed\/))([\w-]{11})/);
+  if (m) return { embed: 'https://www.youtube.com/embed/' + m[1], thumb: 'https://img.youtube.com/vi/' + m[1] + '/hqdefault.jpg' };
+  m = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (m) return { embed: 'https://player.vimeo.com/video/' + m[1], thumb: '' };
+  if (/(vk\.com\/video|vkvideo\.ru)/.test(url)) return { embed: '', thumb: '' };
+  return null;
+}
+function coverOf(p) {
+  const items = portfolioOf(p.userId);
+  const ph = items.find(i => i.type === 'photo');
+  if (ph) return ph.url;
+  const v = items.find(i => i.type === 'video' && videoInfo(i.url)?.thumb);
+  return v ? videoInfo(v.url).thumb : '';
+}
+function recalcRating(specId) {
+  const p = profOf(specId); if (!p) return;
+  const rs = db.reviews.filter(r => r.specId === specId);
+  p.reviewsCount = rs.length;
+  p.rating = rs.length ? Math.round(rs.reduce((s, r) => s + r.rating, 0) / rs.length * 10) / 10 : 0;
+}
+function notify(userId, type, text, link) {
+  const u = userById(userId); if (!u) return;
+  const pref = (u.notif || {})[type] || { app: true, email: true };
+  if (pref.app !== false) db.notifications.push({ id: uid(), userId, type, text, link, readAt: null, createdAt: now() });
+  // Отправка email требует серверной части; здесь фиксируем только факт.
+}
+const isFav = specId => { const u = me(); return !!u && db.favorites.some(f => f.userId === u.id && f.specId === specId); };
+const unreadMsgs = userId => db.messages.filter(m => !m.readAt && m.from !== userId && db.conversations.find(c => c.id === m.convId)?.members.includes(userId)).length;
+
+/* ---------- демо-данные ---------- */
+function seed() {
+  const t = now();
+  const categories = [
+    { id: 'photo', name: 'Фотограф', plural: 'Фотографы', icon: '📷', genres: ['Портрет', 'Свадьба', 'Предметка', 'Репортаж', 'Fashion', 'Семейная'],
+      fields: [{ key: 'studio', label: 'Есть студия', type: 'bool' }, { key: 'gear', label: 'Техника', type: 'text' }] },
+    { id: 'video', name: 'Видеограф', plural: 'Видеографы', icon: '🎥', genres: ['Свадьба', 'Реклама', 'Клипы', 'Корпоратив'],
+      fields: [{ key: 'editing', label: 'Монтаж', type: 'bool' }, { key: 'color', label: 'Цветокоррекция', type: 'bool' }, { key: 'drone', label: 'Дрон', type: 'bool' }] },
+    { id: 'mobile', name: 'Мобилограф', plural: 'Мобилографы', icon: '📱', genres: ['Reels', 'TikTok', 'Shorts'],
+      fields: [{ key: 'editing', label: 'Монтаж', type: 'bool' }, { key: 'smm', label: 'Ведение соцсетей', type: 'bool' }] },
+    { id: 'actor', name: 'Актёр', plural: 'Актёры', icon: '🎭', genres: ['Театр', 'Кино', 'Реклама'],
+      fields: [{ key: 'screenAge', label: 'Возраст на экране', type: 'text' }, { key: 'height', label: 'Рост, см', type: 'number' }, { key: 'look', label: 'Типаж', type: 'text' }, { key: 'showreel', label: 'Шоурил (ссылка)', type: 'url' }, { key: 'skills', label: 'Навыки', type: 'text' }] },
+    { id: 'model', name: 'Модель', plural: 'Модели', icon: '✨', genres: ['Fashion', 'Коммерция', 'Бьюти', 'Show'],
+      fields: [{ key: 'height', label: 'Рост, см', type: 'number' }, { key: 'params', label: 'Параметры', type: 'text' }, { key: 'sizes', label: 'Размер одежды / обуви', type: 'text' }, { key: 'hair', label: 'Цвет волос', type: 'text' }, { key: 'eyes', label: 'Цвет глаз', type: 'text' }, { key: 'polaroids', label: 'Полароиды (ссылка)', type: 'url' }] }
+  ];
+  const cities = ['Алматы', 'Астана', 'Шымкент', 'Караганда', 'Актобе', 'Актау', 'Атырау', 'Павлодар', 'Усть-Каменогорск', 'Костанай']
+    .map((name, i) => ({ id: 'c' + (i + 1), name }));
+  const pass = e => hashPass(e, 'demo123');
+  const notif = () => Object.fromEntries(Object.keys(NOTIF_TYPES).map(k => [k, { app: true, email: true }]));
+  const users = [
+    { id: 'u-admin', email: 'admin@demo.kz', pass: pass('admin@demo.kz'), name: 'Администратор', cityId: 'c1', role: 'client', isAdmin: true, isVerified: true, isBlocked: false, emailConfirmed: true, createdAt: t - 30 * DAY, notif: notif(), blocked: [] },
+    { id: 'u-client', email: 'client@demo.kz', pass: pass('client@demo.kz'), name: 'Ержан Смагулов', cityId: 'c1', role: 'client', isAdmin: false, isVerified: false, isBlocked: false, emailConfirmed: true, createdAt: t - 12 * DAY, notif: notif(), blocked: [] }
+  ];
+  const specs = [
+    ['Айгерим Нурланова', 'aigerim_photo', 'photo', 'c1', 'hour', 15000, ['Портрет', 'Fashion'], { studio: true, gear: 'Sony A7 IV, свет Godox' }, true, 'Снимаю портреты и fashion-истории. Своя студия в центре Алматы, помогу с образом и визажистом.', 'aigerim@demo.kz'],
+    ['Даурен Касымов', 'dauren_film', 'video', 'c2', 'project', 200000, ['Свадьба', 'Клипы'], { editing: true, color: true, drone: true }, true, 'Свадебные фильмы и клипы. Той, кыз узату — снимаю с душой. Монтаж за 2 недели, съёмка с дрона.'],
+    ['Мадина Ким', 'madina_reels', 'mobile', 'c1', 'project', 70000, ['Reels', 'TikTok'], { editing: true, smm: true }, true, 'Делаю вирусные Reels для кафе, салонов и брендов. Сценарий, съёмка, монтаж.'],
+    ['Арман Жумабеков', 'arman_actor', 'actor', 'c1', 'deal', 0, ['Кино', 'Реклама'], { screenAge: '25–32', height: 182, look: 'Герой, спортсмен', skills: 'Верховая езда, бокс, казахский, английский' }, true, 'Выпускник КазНАИ им. Т. Жургенова. Снимался в 12 рекламных роликах и 3 сериалах.'],
+    ['Алина Сатпаева', 'alina_model', 'model', 'c3', 'hour', 25000, ['Fashion', 'Бьюти'], { height: 176, params: '84-61-89', sizes: 'XS / 38', hair: 'Тёмно-русые', eyes: 'Карие' }, true, 'Работаю в fashion и бьюти съёмках, есть опыт показов.'],
+    ['Ерлан Беков', 'erlan_photo', 'photo', 'c3', 'hour', 12000, ['Свадьба', 'Репортаж'], { studio: false, gear: 'Canon R6' }, true, 'Репортажная свадебная съёмка. Живые эмоции без постановки.'],
+    ['Екатерина Новикова', 'katya_wed', 'video', 'c1', 'project', 300000, ['Свадьба', 'Корпоратив'], { editing: true, color: true, drone: false }, false, 'Видео для тоев и корпоративов премиум-класса. Команда из 3 операторов.'],
+    ['Тимур Ахметов', 'timur_shot', 'photo', 'c4', 'project', 60000, ['Предметка'], { studio: true, gear: 'Fujifilm GFX' }, true, 'Предметная съёмка для маркетплейсов и каталогов. Kaspi, Wildberries, Ozon — знаю требования.'],
+    ['Жанна Омарова', 'zhanna_act', 'actor', 'c2', 'project', 100000, ['Театр', 'Кино'], { screenAge: '30–40', height: 168, look: 'Интеллигентная героиня' }, true, 'Актриса театра в Астане. Озвучка на казахском и русском, кино, реклама.'],
+    ['Никита Рой', 'nikita_mob', 'mobile', 'c5', 'hour', 10000, ['Shorts', 'Reels'], { editing: true, smm: false }, false, 'Мобильная съёмка на iPhone 15 Pro, монтаж в CapCut и Premiere.'],
+    ['Дана Ермекова', 'dana_model', 'model', 'c1', 'deal', 0, ['Коммерция', 'Show'], { height: 172, params: '86-62-90', sizes: 'S / 39', hair: 'Тёмные', eyes: 'Карие' }, true, 'Коммерческие съёмки, показы, промо-мероприятия.'],
+    ['Асхат Тулегенов', 'askhat_video', 'video', 'c6', 'project', 120000, ['Реклама', 'Клипы'], { editing: true, color: true, drone: true }, true, 'Рекламные ролики для отелей и ресторанов на побережье Каспия.']
+  ];
+  const profiles = [], portfolio = [];
+  const heights = [800, 600, 750, 900, 650, 700];
+  specs.forEach(([name, username, cat, city, priceType, priceFrom, genres, attrs, available, bio, email], i) => {
+    const id = 'u-' + username;
+    const em = email || username + '@demo.kz';
+    users.push({ id, email: em, pass: pass(em), name, cityId: city, role: 'specialist', isAdmin: false, isVerified: i % 3 === 0, isBlocked: false, emailConfirmed: true, createdAt: t - (20 - i) * DAY, notif: notif(), blocked: [] });
+    profiles.push({ userId: id, username, mainCat: cat, extraCats: [], genres, bio, priceType, priceFrom, available, travels: i % 2 === 0,
+      contacts: { telegram: '@' + username, whatsapp: '', phone: '+7 701 000-' + String(10 + i).padStart(2, '0') + '-00', instagram: username, site: '' },
+      attrs, rating: 0, reviewsCount: 0, createdAt: t - (20 - i) * DAY });
+    for (let k = 0; k < 6; k++) {
+      portfolio.push({ id: 'pf-' + username + k, userId: id, album: k < 4 ? 'Избранное' : 'Разное', type: 'photo', url: `https://picsum.photos/seed/${username}${k}/600/${heights[(k + i) % 6]}`, title: '', sort: k });
+    }
+  });
+  const order = (id, cat, title, desc, cityId, budgetType, min, max, daysAgo, extra = {}) => ({
+    id, clientId: 'u-client', cat, title, desc, cityId, online: cityId === 'online', dateFrom: isoDate(t + 10 * DAY), dateTo: '', budgetType, budgetMin: min, budgetMax: max,
+    refs: [], links: [], deadline: isoDate(t + 7 * DAY), status: 'open', selectedId: null, invited: [], createdAt: t - daysAgo * DAY, ...extra
+  });
+  const orders = [
+    order('o1', 'photo', 'Фотосессия для каталога одежды', 'Нужно снять 30 образов на моделях для интернет-магазина. Студия с циклорамой, белый фон. Ретушь 30 кадров.', 'c1', 'range', 80000, 120000, 1,
+      { refs: ['https://picsum.photos/seed/ref1/400/400', 'https://picsum.photos/seed/ref2/400/400'] }),
+    order('o2', 'video', 'Видеосъёмка тоя + тизер', 'Той на 200 гостей в банкетном зале. Нужен фильм 15–20 минут и тизер на 1 минуту.', 'c2', 'fixed', 250000, 0, 2),
+    order('o3', 'mobile', 'Reels для кофейни (10 роликов)', 'Ищем мобилографа на месяц: 10 роликов для Instagram и TikTok. Сценарии обсудим.', 'online', 'range', 50000, 100000, 0.3),
+    order('o4', 'actor', 'Актёр для рекламы банка', 'Мужчина 28–35 лет, типаж «успешный молодой отец», владение казахским языком. Съёмочный день 12 часов.', 'c1', 'fixed', 150000, 0, 3),
+    order('o5', 'model', 'Модель для лукбука', 'Девушка 170–178 см, размер XS–S. Съёмка лукбука осень-зима, 1 день.', 'c3', 'deal', 0, 0, 4)
+  ];
+  const responses = [
+    { id: 'r1', orderId: 'o1', specId: 'u-erlan_photo', message: 'Здравствуйте! Есть опыт каталожной съёмки, сделаю за 1 день.', price: 90000, links: [], createdAt: t - 0.5 * DAY },
+    { id: 'r2', orderId: 'o1', specId: 'u-aigerim_photo', message: 'Могу предложить свою студию с циклорамой, ретушь включена.', price: 110000, links: [], createdAt: t - 0.2 * DAY },
+    { id: 'r3', orderId: 'o3', specId: 'u-madina_reels', message: 'Сделала 50+ роликов для HoReCa, пришлю кейсы в чат.', price: 70000, links: [], createdAt: t - 0.1 * DAY }
+  ];
+  const reviews = [];
+  const revs = [['aigerim_photo', 5, 'Отличная съёмка, всё вовремя!'], ['aigerim_photo', 5, 'Очень комфортно работать, рекомендую.'], ['aigerim_photo', 4, 'Хороший результат, немного задержали ретушь.'],
+    ['dauren_film', 5, 'Фильм с тоя получился как в кино.'], ['dauren_film', 4, 'Красиво, но монтаж занял 3 недели.'], ['madina_reels', 5, 'Ролики набрали 200к просмотров!'],
+    ['alina_model', 5, 'Профессионал, легко работать.'], ['alina_model', 5, 'Отличная модель.'], ['erlan_photo', 4, 'Хорошие фото, спасибо.'],
+    ['katya_wed', 5, 'Лучшее видео с тоя!'], ['katya_wed', 5, 'Супер команда.'], ['timur_shot', 4, 'Качественная предметка для Kaspi.'], ['zhanna_act', 5, 'Великолепная актриса.']];
+  revs.forEach(([un, rating, text], i) => {
+    const sp = 'u-' + un, cat = profiles.find(p => p.userId === sp).mainCat;
+    const oid = 'od' + i;
+    orders.push(order(oid, cat, 'Съёмка (завершённый заказ)', 'Заказ выполнен.', 'c1', 'fixed', 50000, 0, 40 + i, { status: 'done', selectedId: sp }));
+    reviews.push({ id: 'rv' + i, orderId: oid, authorId: 'u-client', specId: sp, rating, text, reply: i === 0 ? 'Рахмет, Ержан! Приходите ещё.' : '', createdAt: t - (30 - i) * DAY });
+  });
+  const conversations = [{ id: 'cv1', members: ['u-client', 'u-aigerim_photo'], orderId: 'o1', lastAt: t - 3600e3 }];
+  const messages = [
+    { id: 'm1', convId: 'cv1', from: 'u-client', text: 'Айгерим, добрый день! Интересует съёмка каталога, удобно на следующей неделе?', att: null, readAt: t - 7000e3, createdAt: t - 7200e3 },
+    { id: 'm2', convId: 'cv1', from: 'u-aigerim_photo', text: 'Здравствуйте! Да, свободна во вторник и четверг. Пришлите референсы, пожалуйста.', att: null, readAt: null, createdAt: t - 3600e3 }
+  ];
+  const data = { categories, cities, users, profiles, portfolio, orders, responses, reviews, conversations, messages,
+    favorites: [{ userId: 'u-client', specId: 'u-dauren_film' }], reports: [], notifications: [
+      { id: 'n1', userId: 'u-client', type: 'response', text: 'Мадина Ким откликнулась на «Reels для кофейни (10 роликов)»', link: '#/orders/o3', readAt: null, createdAt: t - 0.1 * DAY }] };
+  db = data; profiles.forEach(p => recalcRating(p.userId));
+  return data;
+}
+
+/* ---------- UI-хелперы ---------- */
+function toast(text, err) {
+  const el = document.createElement('div');
+  el.className = 'toast' + (err ? ' err' : ''); el.textContent = text;
+  $('#toasts').append(el); setTimeout(() => el.remove(), 3200);
+}
+function avatar(u, size = 40) {
+  if (u?.avatar) return `<img class="ava" src="${esc(safeUrl(u.avatar))}" alt="" width="${size}" height="${size}" style="width:${size}px;height:${size}px">`;
+  const name = u?.name || '?';
+  const initials = name.split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+  const hue = [...name].reduce((s, c) => s + c.charCodeAt(0), 0) % 360;
+  return `<span class="ava" aria-hidden="true" style="width:${size}px;height:${size}px;font-size:${size * .38}px;background:hsl(${hue} 45% 48%)">${esc(initials)}</span>`;
+}
+const stars = r => `<span class="stars" aria-label="Рейтинг ${r} из 5">${'★'.repeat(Math.round(r))}${'☆'.repeat(5 - Math.round(r))}</span>`;
+const ratingSmall = p => p.reviewsCount ? `<span><span class="stars">★</span> ${p.rating.toFixed(1)} <span class="muted">(${p.reviewsCount})</span></span>` : '<span class="muted small">Нет отзывов</span>';
+const verifiedMark = u => u.isVerified ? '<span class="verified" title="Проверенный профиль" aria-label="Проверенный профиль">✔</span>' : '';
+const badge = n => n ? `<span class="badge">${n > 99 ? '99+' : n}</span>` : '';
+const options = (list, sel, empty) => (empty != null ? `<option value="">${esc(empty)}</option>` : '') + list.map(([v, l]) => `<option value="${esc(v)}" ${String(v) === String(sel) ? 'selected' : ''}>${esc(l)}</option>`).join('');
+const catOptions = (sel, empty) => options(db.categories.map(c => [c.id, c.name]), sel, empty);
+const cityOptions = (sel, empty, online) => options([...db.cities.map(c => [c.id, c.name]), ...(online ? [['online', 'Онлайн']] : [])], sel, empty);
+const statusPill = s => `<span class="pill ${s === 'open' ? 'pill-ok' : s === 'selected' ? 'pill-accent' : s === 'cancelled' ? 'pill-danger' : ''}">${STATUS[s]}</span>`;
+function setMeta(title, desc, image) {
+  document.title = title ? title + ' — MediaHub' : 'MediaHub — фотографы, видеографы, актёры и модели';
+  const set = (sel, v) => { const el = document.querySelector(sel); if (el) el.setAttribute('content', v || ''); };
+  set('meta[name=description]', desc || 'Бесплатная платформа для поиска медиа-специалистов.');
+  set('meta[property="og:title"]', title || 'MediaHub'); set('meta[property="og:description"]', desc || ''); set('meta[property="og:image"]', image || '');
+}
+function needLogin(text = 'Войдите, чтобы продолжить') {
+  return `<div class="wrap"><div class="auth panel empty"><h2>${esc(text)}</h2><p>Это займёт меньше минуты.</p>
+    <div class="flex" style="justify-content:center"><a class="btn" href="#/login?next=${encodeURIComponent(location.hash.slice(1))}">Войти</a><a class="btn btn-ghost" href="#/register">Регистрация</a></div></div></div>`;
+}
+const notFound = () => `<div class="wrap empty"><h1>404</h1><p>Страница не найдена.</p><a class="btn" href="#/">На главную</a></div>`;
+function openModal(html) { $('#modal').innerHTML = `<div class="overlay" data-action="closeModal"><div class="dialog" role="dialog" aria-modal="true">${html}</div></div>`; $('#modal .dialog input, #modal .dialog textarea, #modal .dialog select')?.focus(); }
+function closeModal() { $('#modal').innerHTML = ''; }
+
+function readImage(file, max = 1400, q = 0.82) {
+  return new Promise((res, rej) => {
+    if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) return rej(new Error('Допустимы только изображения JPEG, PNG, WebP, GIF'));
+    const fr = new FileReader();
+    fr.onload = () => { const img = new Image(); img.onload = () => {
+      const k = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas');
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      res(c.toDataURL('image/jpeg', q)); }; img.onerror = () => rej(new Error('Не удалось прочитать изображение')); img.src = fr.result; };
+    fr.onerror = () => rej(new Error('Ошибка чтения файла')); fr.readAsDataURL(file);
+  });
+}
+function readFile(file, limitMb) {
+  return new Promise((res, rej) => {
+    if (file.size > limitMb * 1048576) return rej(new Error(`Файл больше ${limitMb} МБ`));
+    const fr = new FileReader(); fr.onload = () => res(fr.result); fr.onerror = () => rej(new Error('Ошибка чтения файла')); fr.readAsDataURL(file);
+  });
+}
+
+/* ---------- каркас ---------- */
+function renderHeader() {
+  const u = me(), path = parseHash().path;
+  const nUnread = u ? db.notifications.filter(n => n.userId === u.id && !n.readAt).length : 0;
+  const act = p => path.startsWith(p) ? 'active' : '';
+  $('#header').innerHTML = `<header class="hdr"><div class="wrap hdr-in">
+    <a href="#/" class="logo" aria-label="MediaHub — на главную">Media<b>Hub</b></a>
+    <nav class="nav" id="nav" aria-label="Основная навигация">
+      <a href="#/specialists" class="${act('/specialists')}">Найти специалиста</a>
+      <a href="#/orders" class="${path === '/orders' ? 'active' : ''}">Заказы</a>
+      <a href="#/orders/new" class="btn btn-sm">Разместить заказ</a>
+    </nav>
+    <div class="hdr-act">
+      <button class="icon-btn" data-action="theme" aria-label="Сменить тему" title="Светлая / тёмная тема">◐</button>
+      ${u ? `<a class="icon-btn" href="#/messages" aria-label="Сообщения">✉${badge(unreadMsgs(u.id))}</a>
+      <a class="icon-btn" href="#/dashboard?tab=notifications" aria-label="Уведомления">🔔${badge(nUnread)}</a>
+      <details class="menu"><summary aria-label="Меню профиля">${avatar(u, 34)}</summary><div class="menu-pop">
+        <div class="menu-who"><b>${esc(u.name)}</b><div class="muted small">${isSpecMode(u) ? 'Режим исполнителя' : 'Режим заказчика'}</div></div>
+        <button data-action="switchRole">Переключиться: ${isSpecMode(u) ? 'я заказчик' : 'я специалист'}</button><hr>
+        ${profOf(u.id) ? `<a href="#/u/${esc(profOf(u.id).username)}">Мой публичный профиль</a>` : ''}
+        <a href="#/dashboard">Личный кабинет</a><a href="#/messages">Сообщения</a><a href="#/settings">Настройки</a>
+        ${u.isAdmin ? '<a href="#/admin">Админ-панель</a>' : ''}<hr>
+        <button data-action="logout">Выйти</button></div></details>`
+      : `<a href="#/login" class="btn btn-ghost btn-sm">Войти</a>`}
+      <button class="icon-btn burger" data-action="burger" aria-label="Открыть меню" aria-controls="nav">☰</button>
+    </div></div></header>`;
+}
+function renderFooter() {
+  $('#footer').innerHTML = `<footer class="ftr"><div class="wrap ftr-in">
+    <div><a href="#/" class="logo" style="text-decoration:none">Media<b>Hub</b></a><p class="small" style="margin:6px 0 0;max-width:420px">${SAFETY}</p></div>
+    <nav aria-label="Нижнее меню"><a href="#/specialists">Специалисты</a><a href="#/orders">Заказы</a><a href="#/register">Стать исполнителем</a><a href="#/terms">Правила</a><a href="#/privacy">Конфиденциальность</a></nav>
+    <div class="small">© ${new Date().getFullYear()} MediaHub · MVP</div></div></footer>`;
+}
+
+/* ---------- страницы ---------- */
+function specCard(p) {
+  const u = userById(p.userId), cover = coverOf(p), c = catById(p.mainCat);
+  return `<article class="card">
+    <a href="#/u/${esc(p.username)}" class="card-cover" tabindex="-1">${cover ? `<img loading="lazy" src="${esc(safeUrl(cover))}" alt="Работа специалиста ${esc(u.name)}">` : `<div class="no-cover">${c?.icon || '📷'}</div>`}
+      ${p.available ? '<span class="pill pill-ok">Свободен</span>' : '<span class="pill">Занят</span>'}</a>
+    <button class="fav ${isFav(p.userId) ? 'on' : ''}" data-action="fav" data-id="${p.userId}" aria-pressed="${isFav(p.userId)}" aria-label="В избранное">♥</button>
+    <div class="card-body">
+      <a href="#/u/${esc(p.username)}" class="card-name">${esc(u.name)} ${verifiedMark(u)}</a>
+      <div class="muted small">${esc(c?.name || '')} · ${esc(cityName(u.cityId))}</div>
+      <div class="card-foot"><b>${fmtPrice(p)}</b>${ratingSmall(p)}</div>
+    </div></article>`;
+}
+function orderCard(o) {
+  const c = catById(o.cat), n = db.responses.filter(r => r.orderId === o.id).length;
+  return `<a class="order" href="#/orders/${o.id}">
+    <div class="flex"><span class="pill">${c?.icon || ''} ${esc(c?.name || '')}</span>${o.status !== 'open' ? statusPill(o.status) : ''}<span class="muted small right">${ago(o.createdAt)}</span></div>
+    <h3>${esc(o.title)}</h3>
+    <div class="order-meta"><span class="order-budget">${fmtBudget(o)}</span><span>📍 ${esc(o.online ? 'Онлайн' : cityName(o.cityId))}</span>
+      ${o.dateFrom ? `<span>📅 ${fmtDate(o.dateFrom)}${o.dateTo ? ' – ' + fmtDate(o.dateTo) : ''}</span>` : ''}<span>💬 ${n} откл.</span></div></a>`;
+}
+
+function pageHome() {
+  setMeta();
+  const top = visibleProfiles().sort((a, b) => b.rating - a.rating || b.reviewsCount - a.reviewsCount).slice(0, 8);
+  const latest = db.orders.filter(o => o.status === 'open').sort((a, b) => b.createdAt - a.createdAt).slice(0, 4);
+  return `<section class="hero"><div class="wrap">
+      <h1>Фотографы, видеографы, актёры и модели — <span>рядом с вами</span></h1>
+      <p class="lead">Найдите специалиста за пару минут или разместите заказ и получите отклики. Бесплатно, без комиссий.</p>
+      <form class="search" data-form="heroSearch" role="search">
+        <input type="search" name="q" placeholder="Имя, жанр, стиль…" aria-label="Ключевые слова">
+        <select name="cat" aria-label="Категория">${catOptions('', 'Все категории')}</select>
+        <select name="city" aria-label="Город">${cityOptions('', 'Любой город')}</select>
+        <button class="btn" type="submit">Найти</button>
+      </form></div></section>
+    <section class="wrap sec"><h2>Категории</h2><div class="cats">
+      ${db.categories.map(c => `<a class="cat" href="#/specialists/${c.id}"><span class="cat-ic" aria-hidden="true">${c.icon}</span><b>${esc(c.plural)}</b>
+        <small>${visibleProfiles().filter(p => p.mainCat === c.id || p.extraCats.includes(c.id)).length} в каталоге</small></a>`).join('')}</div></section>
+    <section class="wrap sec"><div class="sec-head"><h2>Лучшие специалисты</h2><a href="#/specialists?sort=rating">Весь каталог →</a></div>
+      <div class="grid">${top.map(specCard).join('')}</div></section>
+    <section class="wrap sec"><div class="sec-head"><h2>Последние заказы</h2><a href="#/orders">Все заказы →</a></div>
+      ${latest.length ? latest.map(orderCard).join('') : '<div class="empty panel">Пока нет открытых заказов</div>'}</section>
+    <section class="wrap sec"><h2>Как это работает</h2><div class="steps">
+      <div class="panel"><h3>Для заказчика</h3><ol>
+        <li><span>Найдите специалиста в каталоге по городу, бюджету и стилю — или разместите заказ.</span></li>
+        <li><span>Сравните портфолио и отклики, обсудите детали в чате.</span></li>
+        <li><span>Договоритесь напрямую, а после съёмки оставьте отзыв.</span></li></ol></div>
+      <div class="panel"><h3>Для исполнителя</h3><ol>
+        <li><span>Создайте профиль и загрузите лучшие работы в портфолио.</span></li>
+        <li><span>Откликайтесь на заказы и получайте приглашения от заказчиков.</span></li>
+        <li><span>Делитесь ссылкой на профиль как на визитку и собирайте отзывы.</span></li></ol></div></div></section>
+    <section class="wrap sec"><div class="cta"><div><h2>Вы фотограф, видеограф, актёр или модель?</h2><p>Создайте бесплатное портфолио и получайте заказы.</p></div>
+      <a class="btn" href="${me() ? '#/settings?tab=specialist' : '#/register?role=specialist'}">Стать исполнителем</a></div></section>`;
+}
+
+function pageCatalog(q, catParam) {
+  const cat = catParam || q.cat || '';
+  const c = catById(cat);
+  setMeta(c ? c.plural : 'Каталог специалистов', c ? `${c.plural} для съёмок — портфолио, цены, отзывы.` : 'Каталог медиа-специалистов.');
+  const n = v => v === '' || v == null ? null : Number(v);
+  const showHeight = cat === 'actor' || cat === 'model';
+  const words = (q.q || '').toLowerCase().trim();
+  let list = visibleProfiles().filter(p => {
+    const u = userById(p.userId);
+    if (cat && p.mainCat !== cat && !p.extraCats.includes(cat)) return false;
+    if (q.city && u.cityId !== q.city && !(q.travels && p.travels)) return false;
+    if (q.genre && !p.genres.includes(q.genre)) return false;
+    if (n(q.min) != null && (p.priceType === 'deal' || p.priceFrom < n(q.min))) return false;
+    if (n(q.max) != null && (p.priceType === 'deal' || p.priceFrom > n(q.max))) return false;
+    if (n(q.rating) && p.rating < n(q.rating)) return false;
+    if (q.available && !p.available) return false;
+    if (showHeight && n(q.hmin) && !(Number(p.attrs.height) >= n(q.hmin))) return false;
+    if (showHeight && n(q.hmax) && !(Number(p.attrs.height) <= n(q.hmax))) return false;
+    if (showHeight && q.look && !String(p.attrs.look || '').toLowerCase().includes(q.look.toLowerCase())) return false;
+    if (words) {
+      const hay = [u.name, p.username, p.bio, ...p.genres, catById(p.mainCat)?.name].join(' ').toLowerCase();
+      if (!words.split(/\s+/).every(w => hay.includes(w))) return false;
+    }
+    return true;
+  });
+  const sorters = { rating: (a, b) => b.rating - a.rating || b.reviewsCount - a.reviewsCount, priceAsc: (a, b) => (a.priceFrom || 1e12) - (b.priceFrom || 1e12),
+    priceDesc: (a, b) => (b.priceFrom || 0) - (a.priceFrom || 0), new: (a, b) => b.createdAt - a.createdAt, reviews: (a, b) => b.reviewsCount - a.reviewsCount };
+  list.sort(sorters[q.sort] || sorters.rating);
+  const page = Math.max(1, Number(q.page) || 1);
+  const shown = list.slice(0, page * PAGE_SIZE);
+  const genres = c ? c.genres : [...new Set(db.categories.flatMap(x => x.genres))];
+  return `<div class="wrap layout">
+    <aside><details class="filters panel" open><summary>Фильтры</summary><div>
+      <form data-form="filters" data-auto>
+        <div class="field"><label for="f-q">Поиск</label><input id="f-q" type="search" name="q" value="${esc(q.q || '')}" placeholder="Имя, описание, жанр"></div>
+        <div class="field"><label for="f-cat">Категория</label><select id="f-cat" name="cat">${catOptions(cat, 'Все категории')}</select></div>
+        <div class="field"><label for="f-city">Город</label><select id="f-city" name="city">${cityOptions(q.city, 'Любой город')}</select>
+          <label class="check mt"><input type="checkbox" name="travels" ${q.travels ? 'checked' : ''}> + готовы выехать</label></div>
+        <div class="field"><label for="f-genre">Жанр</label><select id="f-genre" name="genre">${options(genres.map(g => [g, g]), q.genre, 'Любой')}</select></div>
+        <div class="field"><label>Цена, ₸</label><div class="row row-2"><input type="number" name="min" min="0" placeholder="от" value="${esc(q.min || '')}" aria-label="Цена от"><input type="number" name="max" min="0" placeholder="до" value="${esc(q.max || '')}" aria-label="Цена до"></div></div>
+        ${showHeight ? `<div class="field"><label>Рост, см</label><div class="row row-2"><input type="number" name="hmin" placeholder="от" value="${esc(q.hmin || '')}" aria-label="Рост от"><input type="number" name="hmax" placeholder="до" value="${esc(q.hmax || '')}" aria-label="Рост до"></div></div>
+          ${cat === 'actor' ? `<div class="field"><label for="f-look">Типаж</label><input id="f-look" type="text" name="look" value="${esc(q.look || '')}"></div>` : ''}` : ''}
+        <div class="field"><label for="f-r">Рейтинг</label><select id="f-r" name="rating">${options([['4.5', 'от 4,5 ★'], ['4', 'от 4 ★'], ['3', 'от 3 ★']], q.rating, 'Любой')}</select></div>
+        <label class="check"><input type="checkbox" name="available" ${q.available ? 'checked' : ''}> Свободен сейчас</label>
+        <input type="hidden" name="sort" value="${esc(q.sort || '')}">
+        <div class="flex mt"><button class="btn btn-sm" type="submit">Применить</button><a class="link-btn" href="#/specialists">Сбросить</a></div>
+      </form></div></details></aside>
+    <section>
+      <div class="toolbar"><h1 style="margin:0;font-size:26px">${esc(c ? c.plural : 'Все специалисты')} <span class="muted" style="font-weight:400">${list.length}</span></h1>
+        <label class="flex small" style="margin:0">Сортировка
+          <select data-action-change="sort" aria-label="Сортировка">${options([['rating', 'По рейтингу'], ['priceAsc', 'Сначала дешевле'], ['priceDesc', 'Сначала дороже'], ['new', 'Новые'], ['reviews', 'По отзывам']], q.sort || 'rating')}</select></label></div>
+      ${shown.length ? `<div class="grid">${shown.map(specCard).join('')}</div>` : '<div class="empty panel">Никого не нашли. Попробуйте смягчить фильтры.</div>'}
+      ${shown.length < list.length ? `<div class="pager"><button class="btn btn-ghost" data-action="more" data-page="${page + 1}">Показать ещё</button></div>` : ''}
+    </section></div>`;
+}
+
+function pageProfile(q, username) {
+  const p = profByName(username); const u = p && userById(p.userId);
+  if (!p || !u || u.isBlocked) return notFound();
+  const viewer = me(), own = viewer?.id === u.id, c = catById(p.mainCat);
+  setMeta(`${u.name} — ${c?.name || ''}, ${cityName(u.cityId)}`, p.bio.slice(0, 160), coverOf(p));
+  const items = portfolioOf(u.id);
+  const albums = [...new Set(items.map(i => i.album || 'Без альбома'))];
+  const album = albums.includes(q.album) ? q.album : '';
+  const shown = album ? items.filter(i => (i.album || 'Без альбома') === album) : items;
+  const reviews = db.reviews.filter(r => r.specId === u.id).sort((a, b) => b.createdAt - a.createdAt);
+  const contactsRaw = Object.entries({ Telegram: p.contacts.telegram, WhatsApp: p.contacts.whatsapp, Телефон: p.contacts.phone, Instagram: p.contacts.instagram, Сайт: p.contacts.site }).filter(([, v]) => v);
+  const attrs = (c?.fields || []).map(f => [f.label, p.attrs[f.key], f.type]).filter(([, v]) => v !== undefined && v !== '' && v !== false);
+  const shareUrl = location.href.split('#')[0] + '#/u/' + p.username;
+  const tab = q.tab === 'reviews' ? 'reviews' : 'portfolio';
+  return `<div class="wrap">
+    <div class="prof-head"><div>
+      <div class="prof-id">${avatar(u, 84)}<div>
+        <h1>${esc(u.name)} ${verifiedMark(u)}</h1>
+        <div class="muted">${c?.icon || ''} ${esc([c?.name, ...p.extraCats.map(x => catById(x)?.name)].filter(Boolean).join(', '))} · 📍 ${esc(cityName(u.cityId))}${p.travels ? ' · выезд в другие города' : ''}</div>
+        <div class="flex small" style="margin-top:6px">${p.available ? '<span class="pill pill-ok">Свободен для заказов</span>' : '<span class="pill">Занят</span>'}
+          ${p.reviewsCount ? `${stars(p.rating)} <b>${p.rating.toFixed(1)}</b> <a href="#/u/${esc(p.username)}?tab=reviews" class="muted">${p.reviewsCount} отзывов</a>` : '<span class="muted">Пока нет отзывов</span>'}</div>
+      </div></div>
+      <p style="white-space:pre-line">${esc(p.bio)}</p>
+      <div class="chips">${p.genres.map(g => `<span class="chip">${esc(g)}</span>`).join('')}</div>
+    </div>
+    <aside class="panel">
+      <div style="font-size:22px;font-weight:800;margin-bottom:12px">${fmtPrice(p)}</div>
+      ${own ? `<a class="btn btn-block" href="#/settings?tab=specialist">Редактировать профиль</a>`
+        : `<button class="btn btn-block" data-action="chat" data-id="${u.id}">Написать</button>
+           <div class="flex mt"><button class="btn btn-ghost btn-sm" data-action="fav" data-id="${u.id}">${isFav(u.id) ? '♥ В избранном' : '♡ В избранное'}</button>
+           <button class="btn btn-ghost btn-sm" data-action="invite" data-id="${u.id}">Пригласить к заказу</button></div>`}
+      <h3 class="mt">Контакты</h3>
+      ${viewer ? (contactsRaw.length ? `<dl class="kv">${contactsRaw.map(([k, v]) => `<dt>${k}</dt><dd>${k === 'Сайт' ? `<a href="${esc(safeUrl(v))}" target="_blank" rel="noopener nofollow">${esc(v)}</a>` : esc(v)}</dd>`).join('')}</dl>` : '<p class="muted small">Контакты не указаны</p>')
+        : `<div class="lock">🔒 Контакты видны только зарегистрированным пользователям<br><a href="#/login?next=${encodeURIComponent('/u/' + p.username)}">Войти</a></div>`}
+      ${attrs.length ? `<h3 class="mt">Параметры</h3><dl class="kv">${attrs.map(([k, v, t]) => `<dt>${esc(k)}</dt><dd>${t === 'bool' ? 'Да' : t === 'url' ? `<a href="${esc(safeUrl(v))}" target="_blank" rel="noopener nofollow">Открыть</a>` : esc(v)}</dd>`).join('')}</dl>` : ''}
+      <div class="flex mt small"><button class="link-btn" data-action="copy" data-text="${esc(shareUrl)}">Скопировать ссылку</button>
+        ${!own ? `<button class="link-btn right" data-action="report" data-type="profile" data-id="${u.id}">Пожаловаться</button>` : ''}</div>
+    </aside></div>
+    <nav class="tabs" aria-label="Разделы профиля">
+      <a href="#/u/${esc(p.username)}" class="${tab === 'portfolio' ? 'on' : ''}">Портфолио (${items.length})</a>
+      <a href="#/u/${esc(p.username)}?tab=reviews" class="${tab === 'reviews' ? 'on' : ''}">Отзывы (${reviews.length})</a></nav>
+    ${tab === 'portfolio' ? `
+      ${albums.length > 1 ? `<div class="chips" style="margin-bottom:14px"><a class="chip" href="#/u/${esc(p.username)}" style="${!album ? 'background:var(--accent);color:var(--accent-ink)' : ''}">Все</a>
+        ${albums.map(a => `<a class="chip" href="#/u/${esc(p.username)}?album=${encodeURIComponent(a)}" style="${a === album ? 'background:var(--accent);color:var(--accent-ink)' : ''}">${esc(a)}</a>`).join('')}</div>` : ''}
+      ${shown.length ? `<div class="masonry">${shown.map(portfolioFigure).join('')}</div>` : `<div class="empty panel">Портфолио пока пусто${own ? ' — <a href="#/settings?tab=portfolio">добавьте работы</a>' : ''}</div>`}`
+    : `<div class="panel">${reviews.length ? reviews.map(r => reviewItem(r, own)).join('') : '<p class="muted">Отзывов пока нет. Отзыв можно оставить после завершения заказа.</p>'}</div>`}
+  </div>`;
+}
+function portfolioFigure(i) {
+  if (i.type === 'video') {
+    const v = videoInfo(i.url) || {};
+    return `<figure data-action="lightbox" data-video="${esc(v.embed || '')}" data-src="${esc(safeUrl(i.url))}" tabindex="0" role="button" aria-label="Видео ${esc(i.title)}">
+      <div class="vid" style="${v.thumb ? `background-image:url('${esc(v.thumb)}')` : ''}">▶</div>${i.title ? `<figcaption>${esc(i.title)}</figcaption>` : ''}</figure>`;
+  }
+  return `<figure data-action="lightbox" data-src="${esc(safeUrl(i.url))}" tabindex="0" role="button" aria-label="Открыть фото"><img loading="lazy" src="${esc(safeUrl(i.url))}" alt="${esc(i.title || 'Работа из портфолио')}">${i.title ? `<figcaption>${esc(i.title)}</figcaption>` : ''}</figure>`;
+}
+function reviewItem(r, own) {
+  const a = userById(r.authorId);
+  return `<div class="review"><div class="flex">${avatar(a, 32)}<b>${esc(a?.name || 'Пользователь')}</b>${stars(r.rating)}<span class="muted small right">${fmtDate(r.createdAt)}</span></div>
+    <p style="margin:8px 0 0">${esc(r.text)}</p>
+    ${r.reply ? `<div class="reply"><b>Ответ исполнителя:</b> ${esc(r.reply)}</div>` : own ? `<form data-form="reply" data-id="${r.id}" class="mt flex"><input type="text" name="reply" required maxlength="1000" placeholder="Ответить публично (один раз)" style="flex:1"><button class="btn btn-sm">Ответить</button></form>` : ''}
+    ${me() && !own ? `<button class="link-btn small" data-action="report" data-type="review" data-id="${r.id}">Пожаловаться</button>` : ''}</div>`;
+}
+
+function pageOrders(q) {
+  setMeta('Лента заказов', 'Заказы на фото- и видеосъёмку, работу актёров и моделей.');
+  const n = v => v === '' || v == null ? null : Number(v);
+  let list = db.orders.filter(o => o.status === 'open' && !userById(o.clientId)?.isBlocked).filter(o => {
+    if (q.cat && o.cat !== q.cat) return false;
+    if (q.city && (q.city === 'online' ? !o.online : o.cityId !== q.city)) return false;
+    if (n(q.budget) != null) { const top = o.budgetType === 'range' ? o.budgetMax : o.budgetMin; if (o.budgetType !== 'deal' && top < n(q.budget)) return false; }
+    if (q.date && o.dateFrom && o.dateFrom < q.date) return false;
+    return true;
+  }).sort((a, b) => b.createdAt - a.createdAt);
+  return `<div class="wrap layout">
+    <aside><details class="filters panel" open><summary>Фильтры</summary><div>
+      <form data-form="orderFilters" data-auto>
+        <div class="field"><label for="o-cat">Категория</label><select id="o-cat" name="cat">${catOptions(q.cat, 'Все')}</select></div>
+        <div class="field"><label for="o-city">Город</label><select id="o-city" name="city">${cityOptions(q.city, 'Любой', true)}</select></div>
+        <div class="field"><label for="o-b">Бюджет от, ₸</label><input id="o-b" type="number" name="budget" min="0" value="${esc(q.budget || '')}"></div>
+        <div class="field"><label for="o-d">Дата съёмки не раньше</label><input id="o-d" type="date" name="date" value="${esc(q.date || '')}"></div>
+        <div class="flex"><button class="btn btn-sm">Применить</button><a class="link-btn" href="#/orders">Сбросить</a></div>
+      </form></div></details></aside>
+    <section><div class="toolbar"><h1 style="margin:0;font-size:26px">Заказы <span class="muted" style="font-weight:400">${list.length}</span></h1><a class="btn btn-sm" href="#/orders/new">+ Разместить заказ</a></div>
+      ${list.length ? list.map(orderCard).join('') : '<div class="empty panel">Нет заказов по выбранным фильтрам</div>'}</section></div>`;
+}
+
+function pageNewOrder(q) {
+  setMeta('Новый заказ');
+  const u = me(); if (!u) return needLogin('Войдите, чтобы разместить заказ');
+  const edit = q.edit ? orderById(q.edit) : null;
+  if (edit && edit.clientId !== u.id) return notFound();
+  const o = edit || { cat: q.cat || '', budgetType: 'range', cityId: u.cityId, refs: [], links: [] };
+  const invitee = q.invite ? userById(q.invite) : null;
+  return `<div class="wrap" style="max-width:760px;padding-top:24px">
+    <h1>${edit ? 'Редактировать заказ' : 'Новый заказ'}</h1>
+    ${invitee ? `<div class="notice notice-ok">После публикации ${esc(invitee.name)} получит приглашение к заказу.</div>` : ''}
+    <form data-form="order" class="panel" ${edit ? `data-id="${edit.id}"` : ''}>
+      ${invitee ? `<input type="hidden" name="invite" value="${esc(invitee.id)}">` : ''}
+      <div class="field"><label for="n-t">Название</label><input id="n-t" type="text" name="title" required maxlength="120" value="${esc(o.title || '')}" placeholder="Например: фотосессия для каталога"></div>
+      <div class="field"><label for="n-c">Категория специалиста</label><select id="n-c" name="cat" required>${catOptions(o.cat, 'Выберите…')}</select></div>
+      <div class="field"><label for="n-d">Описание задачи</label><textarea id="n-d" name="desc" required maxlength="4000" placeholder="Что нужно снять, количество кадров/роликов, локация, пожелания">${esc(o.desc || '')}</textarea></div>
+      <div class="row row-2"><div class="field"><label for="n-city">Город</label><select id="n-city" name="city">${cityOptions(o.online ? 'online' : o.cityId, null, true)}</select></div>
+        <div class="field"><label for="n-dl">Приём откликов до</label><input id="n-dl" type="date" name="deadline" value="${esc(o.deadline || isoDate(now() + 7 * DAY))}" required></div></div>
+      <div class="row row-2"><div class="field"><label for="n-df">Дата съёмки (с)</label><input id="n-df" type="date" name="dateFrom" value="${esc(o.dateFrom || '')}"></div>
+        <div class="field"><label for="n-dt">по (необязательно)</label><input id="n-dt" type="date" name="dateTo" value="${esc(o.dateTo || '')}"></div></div>
+      <div class="field"><label>Бюджет</label><div class="chips">
+        ${[['fixed', 'Фиксированный'], ['range', 'Диапазон'], ['deal', 'Договорной']].map(([v, l]) => `<label class="chip-check"><input type="radio" name="budgetType" value="${v}" ${o.budgetType === v ? 'checked' : ''}><span>${l}</span></label>`).join('')}</div>
+        <div class="row row-2 mt"><input type="number" name="budgetMin" min="0" placeholder="Сумма / от, ₸" value="${esc(o.budgetMin || '')}" aria-label="Бюджет от"><input type="number" name="budgetMax" min="0" placeholder="до, ₸ (для диапазона)" value="${esc(o.budgetMax || '')}" aria-label="Бюджет до"></div></div>
+      <div class="field"><label for="n-ref">Референсы — изображения (до 10)</label><input id="n-ref" type="file" name="refs" accept="image/jpeg,image/png,image/webp" multiple>
+        ${o.refs.length ? `<div class="hint">Уже загружено: ${o.refs.length}. Новые файлы добавятся к ним.</div>` : ''}</div>
+      <div class="field"><label for="n-l">Ссылки на референсы</label><textarea id="n-l" name="links" style="min-height:70px" placeholder="По одной ссылке в строке">${esc((o.links || []).join('\n'))}</textarea></div>
+      <div class="notice">${SAFETY}</div>
+      <div class="flex"><button class="btn" name="publish" value="1">Опубликовать</button><button class="btn btn-ghost" name="draft" value="1">Сохранить черновик</button></div>
+    </form></div>`;
+}
+
+function pageOrder(q, id) {
+  const o = orderById(id); if (!o) return notFound();
+  const u = me(), client = userById(o.clientId), own = u?.id === o.clientId, c = catById(o.cat);
+  if ((o.status === 'draft' && !own && !u?.isAdmin) || (client?.isBlocked && !u?.isAdmin)) return notFound();
+  setMeta(o.title, o.desc.slice(0, 160));
+  const resps = db.responses.filter(r => r.orderId === o.id).sort((a, b) => b.createdAt - a.createdAt);
+  const myResp = u && resps.find(r => r.specId === u.id);
+  const sel = o.selectedId && userById(o.selectedId);
+  const reviewed = db.reviews.some(r => r.orderId === o.id);
+  const canRespond = u && !own && o.status === 'open' && profOf(u.id) && !myResp;
+  const flow = ['draft', 'open', 'selected', 'done'];
+  return `<div class="wrap" style="max-width:900px;padding-top:24px">
+    <a href="#/orders" class="muted small">← Все заказы</a>
+    <div class="panel mt">
+      <div class="flex"><span class="pill">${c?.icon || ''} ${esc(c?.name || '')}</span>${statusPill(o.status)}<span class="muted small right">Опубликован ${fmtDate(o.createdAt)}</span></div>
+      <h1 style="margin-top:12px;font-size:28px">${esc(o.title)}</h1>
+      <div class="order-meta" style="margin-bottom:14px"><span class="order-budget">${fmtBudget(o)}</span><span>📍 ${esc(o.online ? 'Онлайн' : cityName(o.cityId))}</span>
+        ${o.dateFrom ? `<span>📅 ${fmtDate(o.dateFrom)}${o.dateTo ? ' – ' + fmtDate(o.dateTo) : ''}</span>` : ''}<span>⏳ отклики до ${fmtDate(o.deadline)}</span></div>
+      <p style="white-space:pre-line">${esc(o.desc)}</p>
+      ${o.refs.length ? `<h3>Референсы</h3><div class="refs">${o.refs.map(r => `<img src="${esc(safeUrl(r))}" alt="Референс" loading="lazy" data-action="lightbox" data-src="${esc(safeUrl(r))}">`).join('')}</div>` : ''}
+      ${(o.links || []).length ? `<ul class="mt">${o.links.map(l => `<li><a href="${esc(safeUrl(l))}" target="_blank" rel="noopener nofollow">${esc(l)}</a></li>`).join('')}</ul>` : ''}
+      <div class="flex mt">${avatar(client, 32)}<span>Заказчик: <b>${esc(client?.name)}</b></span>
+        ${u && !own ? `<button class="btn btn-ghost btn-sm" data-action="chat" data-id="${client.id}" data-order="${o.id}">Написать заказчику</button>` : ''}
+        ${u && !own ? `<button class="link-btn small right" data-action="report" data-type="order" data-id="${o.id}">Пожаловаться</button>` : ''}</div>
+    </div>
+    ${own ? `<div class="panel"><h3>Управление заказом</h3>
+      <div class="status-flow">${flow.map((s, i) => `<span class="pill ${o.status === s ? 'on' : ''}">${STATUS[s]}</span>${i < 3 ? '→' : ''}`).join('')} ${o.status === 'cancelled' ? statusPill('cancelled') : ''}</div>
+      <div class="flex mt">
+        ${o.status === 'draft' ? `<button class="btn btn-sm" data-action="orderStatus" data-id="${o.id}" data-status="open">Опубликовать</button>` : ''}
+        ${['draft', 'open'].includes(o.status) ? `<a class="btn btn-ghost btn-sm" href="#/orders/new?edit=${o.id}">Редактировать</a>` : ''}
+        ${o.status === 'selected' ? `<button class="btn btn-sm" data-action="orderStatus" data-id="${o.id}" data-status="done">Заказ выполнен</button>
+          <button class="btn btn-ghost btn-sm" data-action="orderStatus" data-id="${o.id}" data-status="open">Вернуть в поиск</button>` : ''}
+        ${['draft', 'open', 'selected'].includes(o.status) ? `<button class="btn btn-danger btn-sm" data-action="orderStatus" data-id="${o.id}" data-status="cancelled">Отменить заказ</button>` : ''}
+      </div>
+      ${sel ? `<p class="mt">Исполнитель: <a href="#/u/${esc(profOf(sel.id)?.username)}"><b>${esc(sel.name)}</b></a></p>` : ''}
+      ${o.status === 'done' && sel && !reviewed ? `<form data-form="review" data-id="${o.id}" class="mt"><h3>Оставьте отзыв о ${esc(sel.name)}</h3>
+        <div class="chips" role="radiogroup" aria-label="Оценка">${[5, 4, 3, 2, 1].map(n => `<label class="chip-check"><input type="radio" name="rating" value="${n}" ${n === 5 ? 'checked' : ''}><span>${'★'.repeat(n)}</span></label>`).join('')}</div>
+        <div class="field mt"><textarea name="text" required maxlength="2000" placeholder="Как прошла работа?"></textarea></div><button class="btn">Отправить отзыв</button></form>` : ''}
+      ${o.status === 'done' && reviewed ? '<p class="muted mt">Спасибо, отзыв опубликован.</p>' : ''}
+    </div>` : ''}
+    ${o.selectedId && u?.id === o.selectedId ? '<div class="notice notice-ok mt">🎉 Заказчик выбрал вас исполнителем. Обсудите детали в чате.</div>' : ''}
+    <div class="notice mt">${SAFETY}</div>
+    <div class="panel"><h3>Отклики (${resps.length})</h3>
+      ${canRespond ? `<form data-form="respond" data-id="${o.id}" style="margin-bottom:16px">
+        <div class="field"><label for="rs-m">Сопроводительное сообщение</label><textarea id="rs-m" name="message" required maxlength="2000" placeholder="Почему вы подходите, как видите задачу"></textarea></div>
+        <div class="row row-2"><div class="field"><label for="rs-p">Ваша цена, ₸</label><input id="rs-p" type="number" name="price" min="0"></div>
+          <div class="field"><label for="rs-l">Ссылки на работы</label><input id="rs-l" type="text" name="links" placeholder="Через пробел"></div></div>
+        <button class="btn">Откликнуться</button></form>`
+      : !u && o.status === 'open' ? `<div class="lock" style="margin-bottom:12px">Чтобы откликнуться, <a href="#/login?next=${encodeURIComponent('/orders/' + o.id)}">войдите</a> как исполнитель</div>`
+      : u && !own && !profOf(u.id) && o.status === 'open' ? `<div class="lock" style="margin-bottom:12px">Чтобы откликаться, <a href="#/settings?tab=specialist">заполните профиль исполнителя</a></div>` : ''}
+      ${own || u?.isAdmin ? (resps.length ? resps.map(r => respItem(r, o, own)).join('') : '<p class="muted">Откликов пока нет. Пригласите специалистов из <a href="#/specialists/' + o.cat + '">каталога</a>.</p>')
+        : myResp ? respItem(myResp, o, false) : `<p class="muted small">Отклики видит только заказчик.</p>`}
+    </div></div>`;
+}
+function respItem(r, o, own) {
+  const s = userById(r.specId), p = profOf(r.specId);
+  if (!s) return '';
+  return `<div class="resp">${avatar(s, 44)}<div class="resp-body">
+    <div class="flex"><a href="#/u/${esc(p?.username)}"><b>${esc(s.name)}</b></a>${verifiedMark(s)}${p ? ratingSmall(p) : ''}${o.selectedId === s.id ? '<span class="pill pill-accent">Выбран</span>' : ''}<span class="muted small right">${ago(r.createdAt)}</span></div>
+    <p style="margin:6px 0">${esc(r.message)}</p>
+    <div class="flex small">${r.price ? `<b>${money(r.price)}</b>` : ''}${(r.links || []).map(l => `<a href="${esc(safeUrl(l))}" target="_blank" rel="noopener nofollow">ссылка</a>`).join(' ')}</div>
+    ${own ? `<div class="flex mt"><a class="btn btn-ghost btn-sm" href="#/u/${esc(p?.username)}">Профиль</a><button class="btn btn-ghost btn-sm" data-action="chat" data-id="${s.id}" data-order="${o.id}">Написать</button>
+      ${o.status === 'open' ? `<button class="btn btn-sm" data-action="select" data-id="${o.id}" data-spec="${s.id}">Выбрать исполнителем</button>` : ''}</div>` : ''}
+  </div></div>`;
+}
+
+function pageMessages(q, convId) {
+  setMeta('Сообщения');
+  const u = me(); if (!u) return needLogin('Войдите, чтобы открыть сообщения');
+  const convs = db.conversations.filter(c => c.members.includes(u.id)).sort((a, b) => b.lastAt - a.lastAt);
+  const cur = convs.find(c => c.id === convId);
+  if (cur) { let ch = false; db.messages.forEach(m => { if (m.convId === cur.id && m.from !== u.id && !m.readAt) { m.readAt = now(); ch = true; } }); if (ch) { save(); setTimeout(renderHeader); } }
+  const other = c => userById(c.members.find(x => x !== u.id));
+  const msgs = cur ? db.messages.filter(m => m.convId === cur.id).sort((a, b) => a.createdAt - b.createdAt) : [];
+  const ou = cur && other(cur);
+  const blockedByMe = ou && (u.blocked || []).includes(ou.id), blockedMe = ou && (ou.blocked || []).includes(u.id);
+  const order = cur?.orderId && orderById(cur.orderId);
+  return `<div class="wrap"><div class="chat ${cur ? 'has-thread' : ''}">
+    <div class="convs">${convs.length ? convs.map(c => { const o = other(c); const last = db.messages.filter(m => m.convId === c.id).at(-1);
+      const un = db.messages.filter(m => m.convId === c.id && m.from !== u.id && !m.readAt).length;
+      return `<a class="conv ${c.id === convId ? 'on' : ''}" href="#/messages/${c.id}">${avatar(o, 40)}<div class="conv-txt"><b>${esc(o?.name || 'Пользователь')}</b><div>${last ? esc(last.text || '📎 Вложение') : 'Нет сообщений'}</div></div>${un ? `<span class="pill pill-accent">${un}</span>` : ''}</a>`; }).join('')
+      : '<div class="empty">Диалогов пока нет. Начните переписку из профиля специалиста или заказа.</div>'}</div>
+    <div class="thread">${cur ? `
+      <div class="thread-head"><a href="#/messages" class="icon-btn" aria-label="Назад к диалогам">←</a>${avatar(ou, 36)}
+        <div><b>${esc(ou?.name)}</b>${order ? `<div class="small muted">Заказ: <a href="#/orders/${order.id}">${esc(order.title)}</a></div>` : ''}</div>
+        <div class="right flex">${profOf(ou.id) ? `<a class="btn btn-ghost btn-sm" href="#/u/${esc(profOf(ou.id).username)}">Профиль</a>` : ''}
+          <button class="btn btn-ghost btn-sm" data-action="block" data-id="${ou.id}">${blockedByMe ? 'Разблокировать' : 'Заблокировать'}</button></div></div>
+      <div class="msgs" id="msgs"><div class="notice small" style="align-self:center">${SAFETY}</div>
+        ${msgs.map(m => `<div class="msg ${m.from === u.id ? 'mine' : ''}">${m.text ? esc(m.text).replace(/\n/g, '<br>') : ''}
+          ${m.att ? (m.att.type.startsWith('image/') ? `<img src="${esc(safeUrl(m.att.data))}" alt="${esc(m.att.name)}" data-action="lightbox" data-src="${esc(safeUrl(m.att.data))}">` : `<div><a href="${esc(safeUrl(m.att.data))}" download="${esc(m.att.name)}">📎 ${esc(m.att.name)}</a></div>`) : ''}
+          <time>${fmtTime(m.createdAt)}${m.from === u.id && m.readAt ? ' · прочитано' : ''}</time>
+          ${m.from !== u.id ? `<button class="flag" data-action="report" data-type="message" data-id="${m.id}" title="Пожаловаться" aria-label="Пожаловаться на сообщение">⚑</button>` : ''}</div>`).join('')}</div>
+      ${blockedByMe || blockedMe ? `<div class="composer muted small" style="justify-content:center">${blockedByMe ? 'Вы заблокировали этого пользователя' : 'Пользователь ограничил переписку'}</div>`
+        : `<form class="composer" data-form="message" data-id="${cur.id}">
+          <label class="btn btn-ghost btn-sm file-btn" style="margin:0" title="Прикрепить файл (до 2 МБ)">📎<input type="file" name="file" hidden></label>
+          <textarea name="text" placeholder="Сообщение…" aria-label="Текст сообщения" maxlength="4000"></textarea><button class="btn">➤</button></form>`}`
+      : '<div class="empty" style="margin:auto">Выберите диалог</div>'}</div>
+  </div></div>`;
+}
+
+function pageDashboard(q) {
+  setMeta('Личный кабинет');
+  const u = me(); if (!u) return needLogin();
+  const tab = q.tab || (isSpecMode(u) ? 'responses' : 'orders');
+  let body = '';
+  if (tab === 'orders') {
+    const list = db.orders.filter(o => o.clientId === u.id).sort((a, b) => b.createdAt - a.createdAt);
+    body = `<div class="flex between" style="margin-bottom:12px"><span class="muted">${list.length} заказов</span><a class="btn btn-sm" href="#/orders/new">+ Новый заказ</a></div>` + (list.length ? list.map(orderCard).join('') : '<div class="empty panel">Вы ещё не размещали заказов</div>');
+  } else if (tab === 'responses') {
+    const list = db.responses.filter(r => r.specId === u.id).sort((a, b) => b.createdAt - a.createdAt);
+    const invites = db.orders.filter(o => o.invited.includes(u.id) && o.status === 'open');
+    body = (invites.length ? `<h3>Приглашения</h3>${invites.map(orderCard).join('')}<h3 class="mt">Мои отклики</h3>` : '') +
+      (list.length ? list.map(r => { const o = orderById(r.orderId); return o ? orderCard(o) : ''; }).join('') : `<div class="empty panel">Откликов пока нет. <a href="#/orders">Смотреть заказы</a></div>`);
+  } else if (tab === 'favorites') {
+    const list = db.favorites.filter(f => f.userId === u.id).map(f => profOf(f.specId)).filter(Boolean);
+    body = list.length ? `<div class="grid">${list.map(specCard).join('')}</div>` : '<div class="empty panel">В избранном пусто. Нажмите ♥ на карточке специалиста.</div>';
+  } else if (tab === 'notifications') {
+    const list = db.notifications.filter(n => n.userId === u.id).sort((a, b) => b.createdAt - a.createdAt);
+    body = `<div class="panel">${list.length ? list.map(n => `<a href="${esc(n.link || '#/')}" class="conv" style="${n.readAt ? '' : 'font-weight:600'}"><span>${n.type === 'message' ? '✉' : n.type === 'review' ? '★' : n.type === 'invite' ? '📩' : '💬'}</span><div class="conv-txt">${esc(n.text)}<div>${ago(n.createdAt)}</div></div>${n.readAt ? '' : '<span class="pill pill-accent">новое</span>'}</a>`).join('') : '<div class="empty">Уведомлений нет</div>'}</div>`;
+    if (list.some(n => !n.readAt)) setTimeout(() => { list.forEach(n => n.readAt = n.readAt || now()); save(); renderHeader(); }, 1500);
+  }
+  const tabs = [['orders', 'Мои заказы'], ['responses', 'Мои отклики'], ['favorites', 'Избранное'], ['notifications', 'Уведомления']];
+  return `<div class="wrap" style="padding-top:24px">
+    ${!u.emailConfirmed ? `<div class="notice">Подтвердите email ${esc(u.email)}. <button class="link-btn" data-action="confirmEmail">Подтвердить (демо)</button></div>` : ''}
+    <div class="flex between"><div class="flex">${avatar(u, 56)}<div><h1 style="margin:0;font-size:26px">${esc(u.name)}</h1><div class="muted">${isSpecMode(u) ? 'Исполнитель' : 'Заказчик'} · ${esc(cityName(u.cityId))}</div></div></div>
+      <button class="btn btn-ghost btn-sm" data-action="switchRole">Режим: ${isSpecMode(u) ? 'исполнитель' : 'заказчик'} ⇄</button></div>
+    ${isSpecMode(u) && !profOf(u.id) ? '<div class="notice mt">Вы в режиме исполнителя, но профиль не заполнен. <a href="#/settings?tab=specialist">Заполнить профиль</a></div>' : ''}
+    <nav class="tabs">${tabs.map(([k, l]) => `<a href="#/dashboard?tab=${k}" class="${tab === k ? 'on' : ''}">${l}</a>`).join('')}</nav>${body}</div>`;
+}
+
+function pageSettings(q) {
+  setMeta('Настройки');
+  const u = me(); if (!u) return needLogin();
+  const tab = q.tab || 'account', p = profOf(u.id);
+  let body = '';
+  if (tab === 'account') {
+    body = `<form data-form="account" class="panel">
+      <div class="flex" style="margin-bottom:14px">${avatar(u, 64)}<div><label for="s-av">Аватар</label><input id="s-av" type="file" name="avatar" accept="image/jpeg,image/png,image/webp"></div></div>
+      <div class="row row-2"><div class="field"><label for="s-n">Имя или псевдоним</label><input id="s-n" type="text" name="name" required maxlength="80" value="${esc(u.name)}"></div>
+        <div class="field"><label for="s-c">Город</label><select id="s-c" name="city">${cityOptions(u.cityId)}</select></div></div>
+      <div class="field"><label for="s-e">Email</label><input id="s-e" type="email" value="${esc(u.email)}" disabled></div>
+      <div class="field"><label for="s-p">Новый пароль</label><input id="s-p" type="password" name="pass" minlength="6" autocomplete="new-password" placeholder="Оставьте пустым, чтобы не менять"></div>
+      <button class="btn">Сохранить</button></form>`;
+  } else if (tab === 'specialist') {
+    const pr = p || { username: '', mainCat: '', extraCats: [], genres: [], bio: '', priceType: 'hour', priceFrom: '', available: true, travels: false, contacts: {}, attrs: {} };
+    const c = catById(q.cat || pr.mainCat);
+    const genreCats = [c, ...pr.extraCats.map(catById)].filter(Boolean);
+    body = `<form data-form="specialist" class="panel">
+      ${!p ? '<div class="notice notice-ok">Заполните профиль, чтобы появиться в каталоге и откликаться на заказы.</div>' : ''}
+      <div class="row row-2"><div class="field"><label for="sp-u">Адрес профиля</label><input id="sp-u" type="text" name="username" required pattern="[a-zA-Z0-9_.]{3,30}" value="${esc(pr.username)}" placeholder="ivan_photo">
+        <div class="hint">Латиница, цифры, «_» и «.». Ссылка: …#/u/имя</div></div>
+        <div class="field"><label for="sp-c">Основная категория</label><select id="sp-c" name="mainCat" required data-action-change="specCat">${catOptions(c?.id, 'Выберите…')}</select></div></div>
+      <div class="field"><label>Дополнительные категории (до 2)</label><div class="chips">${db.categories.filter(x => x.id !== c?.id).map(x => `<label class="chip-check"><input type="checkbox" name="extraCats" value="${x.id}" ${pr.extraCats.includes(x.id) ? 'checked' : ''}><span>${esc(x.name)}</span></label>`).join('')}</div></div>
+      ${genreCats.length ? `<div class="field"><label>Жанры</label><div class="chips">${[...new Set(genreCats.flatMap(x => x.genres))].map(g => `<label class="chip-check"><input type="checkbox" name="genres" value="${esc(g)}" ${pr.genres.includes(g) ? 'checked' : ''}><span>${esc(g)}</span></label>`).join('')}</div></div>` : ''}
+      <div class="field"><label for="sp-b">О себе</label><textarea id="sp-b" name="bio" maxlength="2000" required>${esc(pr.bio)}</textarea><div class="hint">До 2000 символов</div></div>
+      <div class="row row-2"><div class="field"><label for="sp-pt">Стоимость</label><select id="sp-pt" name="priceType">${options([['hour', 'от X ₸ / час'], ['project', 'от X ₸ / проект'], ['deal', 'Договорная']], pr.priceType)}</select></div>
+        <div class="field"><label for="sp-pf">Цена от, ₸</label><input id="sp-pf" type="number" min="0" name="priceFrom" value="${esc(pr.priceFrom || '')}"></div></div>
+      <label class="check"><input type="checkbox" name="available" ${pr.available ? 'checked' : ''}> Свободен для заказов</label>
+      <label class="check"><input type="checkbox" name="travels" ${pr.travels ? 'checked' : ''}> Готов выезжать в другие города</label>
+      ${c?.fields.length ? `<h3 class="mt">Параметры: ${esc(c.name)}</h3><div class="row row-2">${c.fields.map(f => f.type === 'bool'
+        ? `<label class="check"><input type="checkbox" name="attr_${esc(f.key)}" ${pr.attrs[f.key] ? 'checked' : ''}> ${esc(f.label)}</label>`
+        : `<div class="field"><label for="a-${esc(f.key)}">${esc(f.label)}</label><input id="a-${esc(f.key)}" type="${f.type === 'number' ? 'number' : f.type === 'url' ? 'url' : 'text'}" name="attr_${esc(f.key)}" value="${esc(pr.attrs[f.key] ?? '')}"></div>`).join('')}</div>` : ''}
+      <h3 class="mt">Контакты <span class="muted small" style="font-weight:400">— видны только авторизованным</span></h3>
+      <div class="row row-2">${[['telegram', 'Telegram'], ['whatsapp', 'WhatsApp'], ['phone', 'Телефон'], ['instagram', 'Instagram'], ['site', 'Сайт']].map(([k, l]) => `<div class="field"><label for="ct-${k}">${l}</label><input id="ct-${k}" type="${k === 'site' ? 'url' : 'text'}" name="ct_${k}" value="${esc(pr.contacts[k] || '')}"></div>`).join('')}</div>
+      <div class="flex"><button class="btn">${p ? 'Сохранить' : 'Создать профиль'}</button>${p ? `<a class="btn btn-ghost" href="#/u/${esc(p.username)}">Открыть профиль</a>` : ''}</div></form>`;
+  } else if (tab === 'portfolio') {
+    if (!p) body = '<div class="empty panel">Сначала <a href="#/settings?tab=specialist">создайте профиль исполнителя</a>.</div>';
+    else {
+      const items = portfolioOf(u.id), photos = items.filter(i => i.type === 'photo').length;
+      const albums = [...new Set(items.map(i => i.album).filter(Boolean))];
+      body = `<div class="panel"><h3>Добавить работы</h3>
+        <form data-form="portfolioPhotos" class="row row-2"><div class="field"><label for="pf-f">Фото (${photos}/50)</label><input id="pf-f" type="file" name="files" accept="image/jpeg,image/png,image/webp" multiple required></div>
+          <div class="field"><label for="pf-a">Альбом</label><input id="pf-a" type="text" name="album" list="albums" placeholder="Например: Свадьбы"></div>
+          <div><button class="btn btn-sm">Загрузить фото</button></div></form>
+        <form data-form="portfolioVideo" class="row row-2 mt"><div class="field"><label for="pv-u">Видео — ссылка YouTube / Vimeo / VK Видео</label><input id="pv-u" type="url" name="url" required placeholder="https://youtu.be/…"></div>
+          <div class="field"><label for="pv-t">Название</label><input id="pv-t" type="text" name="title" maxlength="80"></div>
+          <div class="field"><label for="pv-a">Альбом</label><input id="pv-a" type="text" name="album" list="albums"></div><div><button class="btn btn-sm">Добавить видео</button></div></form>
+        <datalist id="albums">${albums.map(a => `<option value="${esc(a)}">`).join('')}</datalist>
+        <p class="hint">Загрузка видеофайлов до 200 МБ доступна после подключения файлового хранилища; в демо — ссылки.</p></div>
+      <div class="panel">${items.length ? `<div class="masonry">${items.map(i => `<figure>${i.type === 'photo' ? `<img src="${esc(safeUrl(i.url))}" alt="" loading="lazy">` : `<div class="vid" style="${videoInfo(i.url)?.thumb ? `background-image:url('${esc(videoInfo(i.url).thumb)}')` : ''}">▶</div>`}
+        <figcaption class="flex between"><span>${esc(i.album || 'Без альбома')}</span><button class="btn btn-sm" style="background:rgba(0,0,0,.6);color:#fff" data-action="delPortfolio" data-id="${i.id}" aria-label="Удалить работу">Удалить</button></figcaption></figure>`).join('')}</div>` : '<p class="muted">Портфолио пусто. Для заполненного профиля нужно минимум 3 работы.</p>'}</div>`;
+    }
+  } else if (tab === 'notifications') {
+    const n = u.notif || {};
+    body = `<form data-form="notif" class="panel"><table><thead><tr><th>Событие</th><th>В интерфейсе</th><th>Email</th></tr></thead><tbody>
+      ${Object.entries(NOTIF_TYPES).map(([k, l]) => `<tr><td>${l}</td><td><input type="checkbox" name="${k}_app" ${n[k]?.app !== false ? 'checked' : ''} aria-label="${l} в интерфейсе"></td><td><input type="checkbox" name="${k}_email" ${n[k]?.email !== false ? 'checked' : ''} aria-label="${l} на email"></td></tr>`).join('')}
+      </tbody></table><button class="btn mt">Сохранить</button></form>`;
+  }
+  const tabs = [['account', 'Аккаунт'], ['specialist', 'Профиль исполнителя'], ['portfolio', 'Портфолио'], ['notifications', 'Уведомления']];
+  return `<div class="wrap" style="max-width:860px;padding-top:24px"><h1>Настройки</h1>
+    <nav class="tabs">${tabs.map(([k, l]) => `<a href="#/settings?tab=${k}" class="${tab === k ? 'on' : ''}">${l}</a>`).join('')}</nav>${body}</div>`;
+}
+
+function pageAdmin(q) {
+  setMeta('Админ-панель');
+  const u = me(); if (!u) return needLogin(); if (!u.isAdmin) return `<div class="wrap empty"><h2>Нет доступа</h2></div>`;
+  const tab = q.tab || 'stats';
+  let body = '';
+  if (tab === 'stats') {
+    const days = [...Array(14)].map((_, i) => { const d = new Date(); d.setHours(0, 0, 0, 0); return d.getTime() - (13 - i) * DAY; });
+    const series = (arr, key = 'createdAt') => days.map(d => arr.filter(x => (x[key] || 0) >= d && x[key] < d + DAY).length);
+    const blocks = [['Регистрации', db.users], ['Заказы', db.orders], ['Отклики', db.responses], ['Диалоги', db.conversations.map(c => ({ createdAt: c.createdAt || c.lastAt }))]];
+    const filled = db.profiles.filter(p => portfolioOf(p.userId).length >= 3).length;
+    body = `<div class="stat-grid">
+      <div class="stat"><span class="muted small">Пользователи</span><b>${db.users.length}</b></div>
+      <div class="stat"><span class="muted small">Исполнители (≥3 работ)</span><b>${filled}</b></div>
+      <div class="stat"><span class="muted small">Открытые заказы</span><b>${db.orders.filter(o => o.status === 'open').length}</b></div>
+      <div class="stat"><span class="muted small">Отклики</span><b>${db.responses.length}</b></div>
+      <div class="stat"><span class="muted small">Диалоги</span><b>${db.conversations.length}</b></div>
+      <div class="stat"><span class="muted small">Новые жалобы</span><b>${db.reports.filter(r => r.status === 'new').length}</b></div></div>
+      <div class="stat-grid">${blocks.map(([l, arr]) => { const s = series(arr), mx = Math.max(1, ...s);
+        return `<div class="stat"><span class="muted small">${l} за 14 дней · ${s.reduce((a, b) => a + b, 0)}</span><div class="bars mt">${s.map((v, i) => `<span style="height:${v / mx * 100}%" title="${fmtDate(days[i])}: ${v}"></span>`).join('')}</div></div>`; }).join('')}</div>`;
+  } else if (tab === 'users') {
+    const s = (q.q || '').toLowerCase();
+    const list = db.users.filter(x => !s || (x.name + ' ' + x.email).toLowerCase().includes(s));
+    body = `<form data-form="adminSearch" class="flex" style="margin-bottom:12px"><input type="search" name="q" value="${esc(q.q || '')}" placeholder="Имя или email" style="max-width:320px"><button class="btn btn-sm">Найти</button></form>
+      <div class="panel table-wrap"><table><thead><tr><th>Пользователь</th><th>Роль</th><th>Создан</th><th>Статус</th><th></th></tr></thead><tbody>
+      ${list.map(x => `<tr><td><b>${esc(x.name)}</b> ${verifiedMark(x)}<div class="muted small">${esc(x.email)}</div>${profOf(x.id) ? `<a class="small" href="#/u/${esc(profOf(x.id).username)}">профиль</a>` : ''}</td>
+        <td>${x.isAdmin ? 'Админ' : profOf(x.id) ? 'Исполнитель' : 'Заказчик'}</td><td class="small">${fmtDate(x.createdAt)}</td>
+        <td>${x.isBlocked ? '<span class="pill pill-danger">Заблокирован</span>' : '<span class="pill pill-ok">Активен</span>'}</td>
+        <td><div class="flex">${x.isAdmin ? '' : `<button class="btn btn-ghost btn-sm" data-action="adminVerify" data-id="${x.id}">${x.isVerified ? 'Снять ✔' : 'Выдать ✔'}</button>
+          <button class="btn btn-danger btn-sm" data-action="adminBlock" data-id="${x.id}">${x.isBlocked ? 'Разблокировать' : 'Заблокировать'}</button>`}</div></td></tr>`).join('')}</tbody></table></div>`;
+  } else if (tab === 'orders') {
+    body = `<div class="panel table-wrap"><table><thead><tr><th>Заказ</th><th>Заказчик</th><th>Статус</th><th></th></tr></thead><tbody>
+      ${db.orders.slice().sort((a, b) => b.createdAt - a.createdAt).map(o => `<tr><td><a href="#/orders/${o.id}">${esc(o.title)}</a><div class="muted small">${fmtDate(o.createdAt)}</div></td><td>${esc(userById(o.clientId)?.name)}</td><td>${statusPill(o.status)}</td>
+        <td><button class="btn btn-danger btn-sm" data-action="adminDelete" data-type="order" data-id="${o.id}">Удалить</button></td></tr>`).join('')}</tbody></table></div>`;
+  } else if (tab === 'reviews') {
+    body = `<div class="panel table-wrap"><table><thead><tr><th>Отзыв</th><th>Исполнитель</th><th></th></tr></thead><tbody>
+      ${db.reviews.map(r => `<tr><td>${stars(r.rating)}<div>${esc(r.text)}</div><div class="muted small">${esc(userById(r.authorId)?.name)} · ${fmtDate(r.createdAt)}</div></td><td>${esc(userById(r.specId)?.name)}</td>
+        <td><button class="btn btn-danger btn-sm" data-action="adminDelete" data-type="review" data-id="${r.id}">Удалить</button></td></tr>`).join('')}</tbody></table></div>`;
+  } else if (tab === 'reports') {
+    const list = db.reports.slice().sort((a, b) => (a.status === 'new' ? -1 : 1) - (b.status === 'new' ? -1 : 1) || b.createdAt - a.createdAt);
+    const tLabel = { profile: 'Профиль', order: 'Заказ', message: 'Сообщение', review: 'Отзыв' };
+    body = `<div class="panel table-wrap">${list.length ? `<table><thead><tr><th>Жалоба</th><th>Объект</th><th>Статус</th><th></th></tr></thead><tbody>
+      ${list.map(r => `<tr><td>${esc(r.reason)}<div class="muted small">${esc(userById(r.authorId)?.name)} · ${fmtDate(r.createdAt)}</div></td><td>${tLabel[r.type]}<div class="small">${reportTarget(r)}</div></td>
+        <td>${r.status === 'new' ? '<span class="pill pill-warn">Новая</span>' : '<span class="pill">Решена</span>'}</td>
+        <td><div class="flex">${r.status === 'new' ? `<button class="btn btn-ghost btn-sm" data-action="adminResolve" data-id="${r.id}">Закрыть</button>
+          <button class="btn btn-danger btn-sm" data-action="adminDelete" data-type="${r.type}" data-id="${r.targetId}" data-report="${r.id}">${r.type === 'profile' ? 'Заблокировать' : 'Удалить контент'}</button>` : ''}</div></td></tr>`).join('')}</tbody></table>` : '<div class="empty">Жалоб нет</div>'}</div>`;
+  } else if (tab === 'catalog') {
+    body = `<div class="panel"><h3>Категории</h3><p class="hint">Поля: по одному в строке в формате <code>ключ | Название | тип</code>, где тип — text, number, bool или url.</p>
+      ${db.categories.map(c => `<form data-form="adminCat" data-id="${c.id}" class="panel" style="margin-bottom:12px">
+        <div class="row row-3"><div class="field"><label>Название</label><input type="text" name="name" value="${esc(c.name)}" required></div>
+          <div class="field"><label>Во мн. числе</label><input type="text" name="plural" value="${esc(c.plural)}" required></div>
+          <div class="field"><label>Иконка</label><input type="text" name="icon" value="${esc(c.icon)}" maxlength="4"></div></div>
+        <div class="field"><label>Жанры (через запятую)</label><input type="text" name="genres" value="${esc(c.genres.join(', '))}"></div>
+        <div class="field"><label>Поля профиля</label><textarea name="fields" style="min-height:80px;font-family:monospace;font-size:13px">${esc(c.fields.map(f => `${f.key} | ${f.label} | ${f.type}`).join('\n'))}</textarea></div>
+        <button class="btn btn-sm">Сохранить</button></form>`).join('')}
+      <form data-form="adminNewCat" class="flex"><input type="text" name="id" required pattern="[a-z]{2,20}" placeholder="slug (латиница)" style="max-width:160px"><input type="text" name="name" required placeholder="Название" style="max-width:220px"><button class="btn btn-sm">+ Категория</button></form></div>
+      <div class="panel"><h3>Города</h3><div class="chips" style="margin-bottom:12px">${db.cities.map(c => `<span class="chip">${esc(c.name)} <button class="link-btn" data-action="adminDelCity" data-id="${c.id}" aria-label="Удалить ${esc(c.name)}">×</button></span>`).join('')}</div>
+      <form data-form="adminCity" class="flex"><input type="text" name="name" required placeholder="Новый город" style="max-width:260px"><button class="btn btn-sm">Добавить</button></form></div>`;
+  }
+  const tabs = [['stats', 'Статистика'], ['users', 'Пользователи'], ['orders', 'Заказы'], ['reviews', 'Отзывы'], ['reports', `Жалобы${db.reports.filter(r => r.status === 'new').length ? ' (' + db.reports.filter(r => r.status === 'new').length + ')' : ''}`], ['catalog', 'Категории и города']];
+  return `<div class="wrap" style="padding-top:24px"><h1>Админ-панель</h1>
+    <nav class="tabs">${tabs.map(([k, l]) => `<a href="#/admin?tab=${k}" class="${tab === k ? 'on' : ''}">${l}</a>`).join('')}</nav>${body}</div>`;
+}
+function reportTarget(r) {
+  if (r.type === 'profile') { const p = profOf(r.targetId); const x = userById(r.targetId); return x ? (p ? `<a href="#/u/${esc(p.username)}">${esc(x.name)}</a>` : esc(x.name)) : 'удалён'; }
+  if (r.type === 'order') { const o = orderById(r.targetId); return o ? `<a href="#/orders/${o.id}">${esc(o.title)}</a>` : 'удалён'; }
+  if (r.type === 'message') { const m = db.messages.find(x => x.id === r.targetId); return m ? `«${esc((m.text || '📎').slice(0, 80))}» — ${esc(userById(m.from)?.name)}` : 'удалено'; }
+  if (r.type === 'review') { const v = db.reviews.find(x => x.id === r.targetId); return v ? `«${esc(v.text.slice(0, 80))}»` : 'удалён'; }
+  return '';
+}
+
+function pageLogin(q) {
+  setMeta('Вход');
+  return `<div class="wrap"><div class="auth"><h1>Вход</h1><div class="panel">
+    <div class="oauth"><button class="btn btn-ghost" data-action="oauth">Google</button><button class="btn btn-ghost" data-action="oauth">Telegram</button></div>
+    <div class="or">или по email</div>
+    <form data-form="login"><input type="hidden" name="next" value="${esc(q.next || '')}">
+      <div class="field"><label for="l-e">Email</label><input id="l-e" type="email" name="email" required autocomplete="email"></div>
+      <div class="field"><label for="l-p">Пароль</label><input id="l-p" type="password" name="pass" required autocomplete="current-password"></div>
+      <button class="btn btn-block">Войти</button></form>
+    <div class="flex between mt small"><button class="link-btn" data-action="forgot">Забыли пароль?</button><a href="#/register">Регистрация</a></div></div>
+    <div class="panel small"><b>Демо-аккаунты</b> (пароль <code>demo123</code>):<br>
+      <button class="link-btn" data-action="demo" data-email="client@demo.kz">client@demo.kz</button> — заказчик<br>
+      <button class="link-btn" data-action="demo" data-email="aigerim@demo.kz">aigerim@demo.kz</button> — фотограф<br>
+      <button class="link-btn" data-action="demo" data-email="admin@demo.kz">admin@demo.kz</button> — администратор</div></div></div>`;
+}
+function pageRegister(q) {
+  setMeta('Регистрация');
+  return `<div class="wrap"><div class="auth"><h1>Регистрация</h1><div class="panel">
+    <div class="oauth"><button class="btn btn-ghost" data-action="oauth">Google</button><button class="btn btn-ghost" data-action="oauth">Telegram</button></div>
+    <div class="or">или по email</div>
+    <form data-form="register"><input type="hidden" name="role" value="${esc(q.role || '')}">
+      <div class="field"><label for="r-n">Имя</label><input id="r-n" type="text" name="name" required maxlength="80" autocomplete="name"></div>
+      <div class="field"><label for="r-e">Email</label><input id="r-e" type="email" name="email" required autocomplete="email"></div>
+      <div class="field"><label for="r-p">Пароль</label><input id="r-p" type="password" name="pass" required minlength="6" autocomplete="new-password"><div class="hint">Минимум 6 символов</div></div>
+      <div class="field"><label for="r-c">Город</label><select id="r-c" name="city">${cityOptions('c1')}</select></div>
+      <label class="check"><input type="checkbox" name="consent" required> Согласен с <a href="#/terms" target="_blank">правилами</a> и на обработку персональных данных по <a href="#/privacy" target="_blank">политике</a> (Закон РК «О персональных данных и их защите»)</label>
+      <button class="btn btn-block mt">Создать аккаунт</button></form>
+    <p class="small mt" style="text-align:center">Уже есть аккаунт? <a href="#/login">Войти</a></p></div></div></div>`;
+}
+function pageOnboarding() {
+  const u = me(); if (!u) return needLogin();
+  return `<div class="wrap" style="max-width:720px;padding-top:40px"><h1>Добро пожаловать, ${esc(u.name)}!</h1><p class="lead">Как вы планируете пользоваться MediaHub? Режим можно сменить в любой момент.</p>
+    <div class="roles"><button class="role-card" data-action="pickRole" data-role="client"><span style="font-size:32px">🔍</span><b>Ищу специалиста</b><span class="muted">Найду исполнителя или размещу заказ</span></button>
+      <button class="role-card" data-action="pickRole" data-role="specialist"><span style="font-size:32px">📸</span><b>Я специалист</b><span class="muted">Создам портфолио и буду получать заказы</span></button></div></div>`;
+}
+function pageTerms() {
+  setMeta('Правила платформы');
+  return `<div class="wrap prose" style="padding-top:24px"><h1>Правила платформы</h1>
+    <p>MediaHub — информационная площадка, которая помогает заказчикам и медиа-специалистам найти друг друга. Платформа бесплатна и не проводит платежи.</p>
+    <h2>1. Расчёты</h2><p>Все договорённости и оплата происходят напрямую между сторонами. ${SAFETY}</p>
+    <h2>2. Контент</h2><p>Публикуйте только работы, на которые у вас есть права. Запрещены материалы, нарушающие законодательство Республики Казахстан, оскорбления и спам.</p>
+    <h2>3. Отзывы</h2><p>Отзыв можно оставить только после завершения заказа. Исполнитель может один раз публично ответить на отзыв.</p>
+    <h2>4. Модерация</h2><p>Администрация вправе удалять контент и блокировать аккаунты за нарушение правил. Сообщить о нарушении можно кнопкой «Пожаловаться».</p></div>`;
+}
+function pagePrivacy() {
+  setMeta('Политика конфиденциальности');
+  return `<div class="wrap prose" style="padding-top:24px"><h1>Политика конфиденциальности</h1>
+    <p>Мы обрабатываем персональные данные в соответствии с Законом Республики Казахстан от 21 мая 2013 года № 94-V «О персональных данных и их защите».</p>
+    <h2>Какие данные мы собираем</h2><p>Имя, email, город, контакты и материалы портфолио, которые вы указываете сами, а также переписку на платформе.</p>
+    <h2>Зачем</h2><p>Для работы сервиса: показа профиля, связи заказчиков и исполнителей, уведомлений и модерации.</p>
+    <h2>Хранение</h2><p>В рабочей версии данные хранятся на серверах на территории Республики Казахстан. Контакты исполнителей показываются только авторизованным пользователям.</p>
+    <h2>Ваши права</h2><p>Вы можете изменить или удалить свои данные в настройках либо обратиться к администрации.</p></div>`;
+}
+
+/* ---------- маршрутизация ---------- */
+function parseHash() {
+  const h = location.hash.slice(1) || '/';
+  const [path, qs] = h.split('?');
+  return { path: path || '/', q: Object.fromEntries(new URLSearchParams(qs || '')) };
+}
+const routes = [
+  [/^\/$/, pageHome], [/^\/specialists(?:\/([\w-]+))?$/, pageCatalog], [/^\/u\/([\w.]+)$/, pageProfile],
+  [/^\/orders$/, pageOrders], [/^\/orders\/new$/, pageNewOrder], [/^\/orders\/([\w-]+)$/, pageOrder],
+  [/^\/messages(?:\/([\w-]+))?$/, pageMessages], [/^\/dashboard$/, pageDashboard], [/^\/settings$/, pageSettings],
+  [/^\/admin$/, pageAdmin], [/^\/login$/, pageLogin], [/^\/register$/, pageRegister], [/^\/onboarding$/, pageOnboarding],
+  [/^\/terms$/, pageTerms], [/^\/privacy$/, pagePrivacy]
+];
+let lastPath = null;
+// Сохраняем введённое в форме профиля, когда смена категории перерисовывает страницу
+let pendingForm = null;
+function restoreForm() {
+  const f = $(`form[data-form=${pendingForm.form}]`), data = pendingForm.data;
+  pendingForm = null;
+  if (!f) return;
+  f.querySelectorAll('input, textarea, select').forEach(el => {
+    if (!el.name || el.name.startsWith('attr_') || el.name === 'genres' || el.name === 'mainCat') return;
+    if (el.type === 'checkbox') el.checked = data.some(([k, v]) => k === el.name && v === el.value);
+    else { const hit = data.find(([k]) => k === el.name); if (hit) el.value = hit[1]; }
+  });
+}
+function render(keepScroll) {
+  const { path, q } = parseHash();
+  let html = notFound();
+  for (const [re, fn] of routes) { const m = path.match(re); if (m) { html = fn(q, ...m.slice(1).map(x => x && decodeURIComponent(x))); break; } }
+  renderHeader();
+  $('#app').innerHTML = html;
+  const msgs = $('#msgs'); if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  if (pendingForm) restoreForm();
+  if (!keepScroll && path !== lastPath) window.scrollTo(0, 0);
+  lastPath = path;
+}
+const go = h => { if (location.hash === h) render(true); else location.hash = h; };
+
+/* ---------- действия ---------- */
+function requireUser() { const u = me(); if (!u) { go('#/login?next=' + encodeURIComponent(location.hash.slice(1))); return null; } return u; }
+function openChat(otherId, orderId) {
+  const u = requireUser(); if (!u) return;
+  if (otherId === u.id) return toast('Это ваш профиль');
+  let c = db.conversations.find(x => x.members.includes(u.id) && x.members.includes(otherId));
+  if (!c) { c = { id: uid(), members: [u.id, otherId], orderId: orderId || null, createdAt: now(), lastAt: now() }; db.conversations.push(c); save(); }
+  else if (orderId && !c.orderId) { c.orderId = orderId; save(); }
+  go('#/messages/' + c.id);
+}
+function queryFromForm(f) {
+  const p = new URLSearchParams();
+  for (const [k, v] of new FormData(f)) if (v !== '' && k !== 'cat') p.set(k, v === 'on' ? '1' : v);
+  return p.toString();
+}
+
+const actions = {
+  theme() {
+    const cur = document.documentElement.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const next = cur === 'dark' ? 'light' : 'dark'; document.documentElement.dataset.theme = next; lsSet(THEME_KEY, next);
+  },
+  burger() { $('#nav').classList.toggle('open'); },
+  logout() { lsSet(SES_KEY, null); toast('Вы вышли'); go('#/'); },
+  switchRole() { const u = me(); u.role = isSpecMode(u) ? 'client' : 'specialist'; save(); toast(isSpecMode(u) ? 'Режим исполнителя' : 'Режим заказчика'); if (isSpecMode(u) && !profOf(u.id)) go('#/settings?tab=specialist'); else render(true); },
+  pickRole(d) { const u = me(); u.role = d.role; save(); go(d.role === 'specialist' ? '#/settings?tab=specialist' : '#/specialists'); },
+  fav(d) {
+    const u = requireUser(); if (!u) return;
+    if (d.id === u.id) return toast('Нельзя добавить себя в избранное');
+    const i = db.favorites.findIndex(f => f.userId === u.id && f.specId === d.id);
+    if (i >= 0) { db.favorites.splice(i, 1); toast('Удалено из избранного'); } else { db.favorites.push({ userId: u.id, specId: d.id }); toast('Добавлено в избранное'); }
+    save(); render(true);
+  },
+  chat(d) { openChat(d.id, d.order); },
+  more(d) { const { path, q } = parseHash(); q.page = d.page; go('#' + path + '?' + new URLSearchParams(q)); },
+  copy(d) { (navigator.clipboard?.writeText(d.text) || Promise.reject()).then(() => toast('Ссылка скопирована'), () => prompt('Скопируйте ссылку:', d.text)); },
+  lightbox(d) {
+    $('#modal').innerHTML = `<div class="overlay lightbox" data-action="closeModal"><button class="lb-close" aria-label="Закрыть">×</button>
+      ${d.video ? `<iframe src="${esc(d.video)}" allow="autoplay; fullscreen" allowfullscreen title="Видео"></iframe>` : d.src && d.src !== '#' && !/^https?:\/\/(www\.)?(vk\.com|vkvideo\.ru)/.test(d.src) ? `<img src="${esc(d.src)}" alt="">` : `<a class="btn" href="${esc(d.src)}" target="_blank" rel="noopener">Открыть видео</a>`}</div>`;
+  },
+  closeModal() { closeModal(); },
+  invite(d) {
+    const u = requireUser(); if (!u) return;
+    const open = db.orders.filter(o => o.clientId === u.id && o.status === 'open');
+    const spec = userById(d.id);
+    if (!open.length) return go('#/orders/new?invite=' + d.id + '&cat=' + (profOf(d.id)?.mainCat || ''));
+    openModal(`<h3>Пригласить ${esc(spec.name)}</h3><form data-form="invite" data-id="${d.id}"><div class="field"><label for="iv-o">Заказ</label><select id="iv-o" name="order">${options(open.map(o => [o.id, o.title]))}</select></div>
+      <div class="flex"><button class="btn">Пригласить</button><a class="btn btn-ghost" href="#/orders/new?invite=${d.id}" data-close>Новый заказ</a><button type="button" class="link-btn" data-action="closeModal" data-close>Отмена</button></div></form>`);
+  },
+  report(d) {
+    if (!requireUser()) return;
+    openModal(`<h3>Пожаловаться</h3><form data-form="report" data-type="${esc(d.type)}" data-id="${esc(d.id)}">
+      <div class="field"><label for="rp-r">Причина</label><select id="rp-r" name="reason">${options(['Спам или реклама', 'Мошенничество', 'Оскорбления', 'Чужие работы', 'Недостоверная информация', 'Другое'].map(x => [x, x]))}</select></div>
+      <div class="field"><label for="rp-t">Комментарий</label><textarea id="rp-t" name="comment" maxlength="1000" style="min-height:70px"></textarea></div>
+      <div class="flex"><button class="btn">Отправить</button><button type="button" class="link-btn" data-action="closeModal" data-close>Отмена</button></div></form>`);
+  },
+  block(d) {
+    const u = me(); u.blocked = u.blocked || [];
+    const i = u.blocked.indexOf(d.id);
+    if (i >= 0) { u.blocked.splice(i, 1); toast('Пользователь разблокирован'); } else { u.blocked.push(d.id); toast('Пользователь заблокирован'); }
+    save(); render(true);
+  },
+  select(d) {
+    const o = orderById(d.id), s = userById(d.spec);
+    if (!confirm(`Выбрать ${s.name} исполнителем?`)) return;
+    o.selectedId = s.id; o.status = 'selected';
+    notify(s.id, 'response', `Вас выбрали исполнителем заказа «${o.title}»`, '#/orders/' + o.id);
+    save(); toast('Исполнитель выбран'); render(true);
+  },
+  orderStatus(d) {
+    const o = orderById(d.id);
+    if (d.status === 'cancelled' && !confirm('Отменить заказ?')) return;
+    if (d.status === 'open' && o.status === 'selected') o.selectedId = null;
+    o.status = d.status; save(); toast('Статус: ' + STATUS[d.status]); render(true);
+  },
+  delPortfolio(d) { if (!confirm('Удалить работу?')) return; db.portfolio = db.portfolio.filter(x => x.id !== d.id); save(); render(true); },
+  confirmEmail() { me().emailConfirmed = true; save(); toast('Email подтверждён'); render(true); },
+  oauth() { toast('Вход через Google и Telegram заработает после подключения сервера (OAuth)'); },
+  forgot() {
+    openModal(`<h3>Восстановление пароля</h3><form data-form="forgot"><div class="field"><label for="fg-e">Email</label><input id="fg-e" type="email" name="email" required></div>
+      <div class="flex"><button class="btn">Отправить ссылку</button><button type="button" class="link-btn" data-action="closeModal" data-close>Отмена</button></div></form>`);
+  },
+  demo(d) { const f = $('form[data-form=login]'); f.email.value = d.email; f.pass.value = 'demo123'; f.requestSubmit(); },
+  adminVerify(d) { const x = userById(d.id); x.isVerified = !x.isVerified; save(); render(true); },
+  adminBlock(d) { const x = userById(d.id); x.isBlocked = !x.isBlocked; save(); toast(x.isBlocked ? 'Заблокирован' : 'Разблокирован'); render(true); },
+  adminResolve(d) { db.reports.find(r => r.id === d.id).status = 'resolved'; save(); render(true); },
+  adminDelete(d) {
+    if (!confirm('Удалить / заблокировать без возможности восстановления?')) return;
+    if (d.type === 'order') { db.orders = db.orders.filter(o => o.id !== d.id); db.responses = db.responses.filter(r => r.orderId !== d.id); }
+    if (d.type === 'review') { const r = db.reviews.find(x => x.id === d.id); db.reviews = db.reviews.filter(x => x.id !== d.id); if (r) recalcRating(r.specId); }
+    if (d.type === 'message') db.messages = db.messages.filter(m => m.id !== d.id);
+    if (d.type === 'profile') { const x = userById(d.id); if (x) x.isBlocked = true; }
+    if (d.report) db.reports.find(r => r.id === d.report).status = 'resolved';
+    save(); toast('Готово'); render(true);
+  },
+  adminDelCity(d) {
+    if (db.users.some(u => u.cityId === d.id) || db.orders.some(o => o.cityId === d.id)) return toast('Город используется в профилях или заказах', true);
+    db.cities = db.cities.filter(c => c.id !== d.id); save(); render(true);
+  }
+};
+
+const forms = {
+  heroSearch(f) { const cat = f.cat.value; f.cat.value = ''; go('#/specialists' + (cat ? '/' + cat : '') + '?' + queryFromForm(f)); },
+  filters(f) { go('#/specialists' + (f.cat.value ? '/' + f.cat.value : '') + '?' + queryFromForm(f)); },
+  orderFilters(f) { const p = new URLSearchParams(); for (const [k, v] of new FormData(f)) if (v) p.set(k, v); go('#/orders?' + p); },
+  adminSearch(f) { go('#/admin?tab=users&q=' + encodeURIComponent(f.q.value)); },
+  login(f) {
+    const email = f.email.value.trim().toLowerCase();
+    const u = db.users.find(x => x.email.toLowerCase() === email);
+    if (!u || u.pass !== hashPass(email, f.pass.value)) return toast('Неверный email или пароль', true);
+    if (u.isBlocked) return toast('Аккаунт заблокирован администратором', true);
+    lsSet(SES_KEY, u.id); toast('Добро пожаловать, ' + u.name + '!');
+    go('#' + (f.next.value || '/dashboard'));
+  },
+  register(f) {
+    const email = f.email.value.trim().toLowerCase();
+    if (db.users.some(x => x.email.toLowerCase() === email)) return toast('Этот email уже зарегистрирован', true);
+    const u = { id: uid(), email, pass: hashPass(email, f.pass.value), name: f.name.value.trim(), cityId: f.city.value, role: f.role.value || 'client', isAdmin: false, isVerified: false, isBlocked: false,
+      emailConfirmed: false, createdAt: now(), notif: Object.fromEntries(Object.keys(NOTIF_TYPES).map(k => [k, { app: true, email: true }])), blocked: [] };
+    db.users.push(u); save(); lsSet(SES_KEY, u.id);
+    toast('Аккаунт создан. Письмо для подтверждения email отправлено (демо).');
+    go(f.role.value === 'specialist' ? '#/settings?tab=specialist' : '#/onboarding');
+  },
+  forgot() { closeModal(); toast('Если email зарегистрирован, мы отправили ссылку для сброса пароля (демо)'); },
+  async account(f) {
+    const u = me();
+    u.name = f.name.value.trim(); u.cityId = f.city.value;
+    if (f.pass.value) u.pass = hashPass(u.email, f.pass.value);
+    try { if (f.avatar.files[0]) u.avatar = await readImage(f.avatar.files[0], 300); } catch (e) { return toast(e.message, true); }
+    save(); toast('Сохранено'); render(true);
+  },
+  specialist(f) {
+    const u = me(), fd = new FormData(f);
+    const username = f.username.value.trim();
+    const taken = db.profiles.find(p => p.username.toLowerCase() === username.toLowerCase() && p.userId !== u.id);
+    const reserved = ['specialists', 'orders', 'messages', 'dashboard', 'settings', 'admin', 'login', 'register', 'terms', 'privacy'];
+    if (taken || reserved.includes(username.toLowerCase())) return toast('Этот адрес профиля уже занят', true);
+    const extra = fd.getAll('extraCats').filter(x => x !== f.mainCat.value);
+    if (extra.length > 2) return toast('Можно выбрать не более 2 дополнительных категорий', true);
+    const c = catById(f.mainCat.value);
+    const attrs = {};
+    c.fields.forEach(fl => { const v = fd.get('attr_' + fl.key); attrs[fl.key] = fl.type === 'bool' ? v === 'on' : fl.type === 'number' ? (v ? Number(v) : '') : (v || '').trim(); });
+    let p = profOf(u.id);
+    const isNew = !p;
+    if (!p) { p = { userId: u.id, rating: 0, reviewsCount: 0, createdAt: now() }; db.profiles.push(p); }
+    Object.assign(p, { username, mainCat: c.id, extraCats: extra, genres: fd.getAll('genres'), bio: f.bio.value.trim(), priceType: f.priceType.value,
+      priceFrom: Number(f.priceFrom.value) || 0, available: f.available.checked, travels: f.travels.checked, attrs,
+      contacts: Object.fromEntries(['telegram', 'whatsapp', 'phone', 'instagram', 'site'].map(k => [k, fd.get('ct_' + k).trim()])) });
+    u.role = 'specialist'; save();
+    toast(isNew ? 'Профиль создан! Добавьте работы в портфолио' : 'Профиль сохранён');
+    go(isNew ? '#/settings?tab=portfolio' : '#/settings?tab=specialist');
+  },
+  async portfolioPhotos(f) {
+    const u = me(), files = [...f.files.files];
+    const have = db.portfolio.filter(x => x.userId === u.id && x.type === 'photo').length;
+    if (have + files.length > 50) return toast(`Не более 50 фото (сейчас ${have})`, true);
+    let max = Math.max(0, ...db.portfolio.filter(x => x.userId === u.id).map(x => x.sort));
+    try {
+      for (const file of files) db.portfolio.push({ id: uid(), userId: u.id, album: f.album.value.trim(), type: 'photo', url: await readImage(file), title: '', sort: ++max });
+    } catch (e) { return toast(e.message, true); }
+    save(); toast('Загружено: ' + files.length); render(true);
+  },
+  portfolioVideo(f) {
+    const u = me(), url = f.url.value.trim();
+    if (!videoInfo(url)) return toast('Поддерживаются ссылки YouTube, Vimeo и VK Видео', true);
+    const max = Math.max(0, ...db.portfolio.filter(x => x.userId === u.id).map(x => x.sort));
+    db.portfolio.push({ id: uid(), userId: u.id, album: f.album.value.trim(), type: 'video', url, title: f.title.value.trim(), sort: max + 1 });
+    save(); toast('Видео добавлено'); render(true);
+  },
+  notif(f) { const u = me(); u.notif = Object.fromEntries(Object.keys(NOTIF_TYPES).map(k => [k, { app: f[k + '_app'].checked, email: f[k + '_email'].checked }])); save(); toast('Настройки уведомлений сохранены'); },
+  async order(f, submitter) {
+    const u = me(), fd = new FormData(f);
+    const bt = fd.get('budgetType') || 'deal';
+    const min = Number(f.budgetMin.value) || 0, max = Number(f.budgetMax.value) || 0;
+    if (bt === 'fixed' && !min) return toast('Укажите сумму бюджета', true);
+    if (bt === 'range' && (!min || !max || max < min)) return toast('Укажите корректный диапазон бюджета', true);
+    if (f.dateTo.value && f.dateFrom.value && f.dateTo.value < f.dateFrom.value) return toast('Дата окончания раньше даты начала', true);
+    let o = f.dataset.id ? orderById(f.dataset.id) : null;
+    const files = [...f.refs.files];
+    if ((o?.refs.length || 0) + files.length > 10) return toast('Не более 10 изображений-референсов', true);
+    const refs = [];
+    try { for (const file of files) refs.push(await readImage(file, 1000, 0.75)); } catch (e) { return toast(e.message, true); }
+    const city = f.city.value;
+    const data = { title: f.title.value.trim(), cat: f.cat.value, desc: f.desc.value.trim(), cityId: city === 'online' ? u.cityId : city, online: city === 'online',
+      dateFrom: f.dateFrom.value, dateTo: f.dateTo.value, budgetType: bt, budgetMin: bt === 'deal' ? 0 : min, budgetMax: bt === 'range' ? max : 0,
+      links: f.links.value.split('\n').map(s => s.trim()).filter(s => /^https?:\/\//.test(s)), deadline: f.deadline.value };
+    const publish = submitter?.name !== 'draft';
+    if (o) { Object.assign(o, data); o.refs.push(...refs); if (publish && o.status === 'draft') o.status = 'open'; }
+    else { o = { id: uid(), clientId: u.id, ...data, refs, status: publish ? 'open' : 'draft', selectedId: null, invited: [], createdAt: now() }; db.orders.push(o); }
+    const inv = f.invite?.value;
+    if (inv && publish && !o.invited.includes(inv)) { o.invited.push(inv); notify(inv, 'invite', `${u.name} приглашает вас к заказу «${o.title}»`, '#/orders/' + o.id); }
+    save(); toast(publish ? 'Заказ опубликован' : 'Черновик сохранён'); go('#/orders/' + o.id);
+  },
+  respond(f) {
+    const u = me(), o = orderById(f.dataset.id);
+    db.responses.push({ id: uid(), orderId: o.id, specId: u.id, message: f.message.value.trim(), price: Number(f.price.value) || 0,
+      links: f.links.value.split(/\s+/).filter(s => /^https?:\/\//.test(s)), createdAt: now() });
+    notify(o.clientId, 'response', `${u.name} откликнулся на «${o.title}»`, '#/orders/' + o.id);
+    save(); toast('Отклик отправлен'); render(true);
+  },
+  review(f) {
+    const u = me(), o = orderById(f.dataset.id);
+    if (o.status !== 'done' || o.clientId !== u.id || db.reviews.some(r => r.orderId === o.id)) return toast('Отзыв нельзя оставить', true);
+    db.reviews.push({ id: uid(), orderId: o.id, authorId: u.id, specId: o.selectedId, rating: Number(new FormData(f).get('rating')), text: f.text.value.trim(), reply: '', createdAt: now() });
+    recalcRating(o.selectedId);
+    notify(o.selectedId, 'review', `${u.name} оставил отзыв по заказу «${o.title}»`, '#/u/' + profOf(o.selectedId)?.username + '?tab=reviews');
+    save(); toast('Спасибо за отзыв!'); render(true);
+  },
+  reply(f) { const r = db.reviews.find(x => x.id === f.dataset.id); if (r.reply || r.specId !== me().id) return; r.reply = f.reply.value.trim(); save(); toast('Ответ опубликован'); render(true); },
+  async message(f) {
+    const u = me(), c = db.conversations.find(x => x.id === f.dataset.id);
+    const text = f.text.value.trim(), file = f.file.files[0];
+    if (!text && !file) return;
+    const lastMine = db.messages.filter(m => m.from === u.id).at(-1);
+    if (lastMine && now() - lastMine.createdAt < 700) return toast('Слишком часто, подождите секунду', true);
+    let att = null;
+    try { if (file) att = { name: file.name, type: file.type || 'application/octet-stream', data: file.type.startsWith('image/') ? await readImage(file, 1200) : await readFile(file, 2) }; }
+    catch (e) { return toast(e.message, true); }
+    db.messages.push({ id: uid(), convId: c.id, from: u.id, text, att, readAt: null, createdAt: now() });
+    c.lastAt = now();
+    const other = c.members.find(x => x !== u.id);
+    if (!db.notifications.some(n => n.userId === other && n.type === 'message' && !n.readAt && n.link === '#/messages/' + c.id))
+      notify(other, 'message', `Новое сообщение от ${u.name}`, '#/messages/' + c.id);
+    save(); render(true); $('form[data-form=message] textarea')?.focus();
+  },
+  invite(f) {
+    const u = me(), o = orderById(f.order.value), spec = userById(f.dataset.id);
+    if (!o.invited.includes(spec.id)) { o.invited.push(spec.id); notify(spec.id, 'invite', `${u.name} приглашает вас к заказу «${o.title}»`, '#/orders/' + o.id); save(); }
+    closeModal(); toast('Приглашение отправлено');
+  },
+  report(f) {
+    db.reports.push({ id: uid(), authorId: me().id, type: f.dataset.type, targetId: f.dataset.id, reason: f.reason.value + (f.comment.value.trim() ? ': ' + f.comment.value.trim() : ''), status: 'new', createdAt: now() });
+    save(); closeModal(); toast('Жалоба отправлена модераторам');
+  },
+  adminCat(f) {
+    const c = catById(f.dataset.id);
+    const fields = f.fields.value.split('\n').map(l => l.split('|').map(s => s.trim())).filter(a => a[0] && a[1])
+      .map(([key, label, type]) => ({ key: key.replace(/\W/g, ''), label, type: ['text', 'number', 'bool', 'url'].includes(type) ? type : 'text' }));
+    Object.assign(c, { name: f.name.value.trim(), plural: f.plural.value.trim(), icon: f.icon.value.trim() || '•', genres: f.genres.value.split(',').map(s => s.trim()).filter(Boolean), fields });
+    save(); toast('Категория сохранена'); render(true);
+  },
+  adminNewCat(f) {
+    if (catById(f.id.value)) return toast('Такой slug уже есть', true);
+    db.categories.push({ id: f.id.value, name: f.name.value.trim(), plural: f.name.value.trim(), icon: '•', genres: [], fields: [] }); save(); render(true);
+  },
+  adminCity(f) { db.cities.push({ id: uid(), name: f.name.value.trim() }); save(); render(true); }
+};
+
+/* ---------- события ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-action]');
+  if (!e.target.closest('.menu')) document.querySelectorAll('details.menu[open]').forEach(d => d.removeAttribute('open'));
+  if (e.target.closest('.nav a')) $('#nav')?.classList.remove('open');
+  if (!el || !actions[el.dataset.action]) return;
+  if (el.dataset.action === 'closeModal') {
+    if (e.target.closest('.dialog') && !e.target.closest('[data-close]')) return;
+    if (!e.target.closest('a[href]')) e.preventDefault();
+    closeModal(); return;
+  }
+  e.preventDefault();
+  actions[el.dataset.action]({ ...el.dataset }, e);
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'Enter' && e.target.matches('figure[data-action]')) e.target.click();
+  if (e.key === 'Enter' && !e.shiftKey && e.target.matches('.composer textarea')) { e.preventDefault(); e.target.form.requestSubmit(); }
+});
+document.addEventListener('submit', e => {
+  const f = e.target, h = forms[f.dataset.form];
+  if (!h) return;
+  e.preventDefault();
+  const btn = e.submitter; if (btn) btn.disabled = true;
+  Promise.resolve(h(f, btn)).catch(err => toast(err.message || 'Ошибка', true)).finally(() => { if (btn && document.contains(btn)) btn.disabled = false; });
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.matches('[data-action-change=sort]')) { const { path, q } = parseHash(); q.sort = t.value; delete q.page; go('#' + path + '?' + new URLSearchParams(q)); return; }
+  if (t.matches('[data-action-change=specCat]')) { pendingForm = { form: 'specialist', data: [...new FormData(t.form)] }; go('#/settings?tab=specialist&cat=' + t.value); return; }
+  if (t.type === 'file' && t.closest('.composer') && t.files[0]) toast('Прикреплён файл: ' + t.files[0].name);
+  const f = t.form;
+  if (f?.hasAttribute('data-auto') && t.type !== 'search' && t.type !== 'number' && t.type !== 'text') f.requestSubmit();
+});
+window.addEventListener('hashchange', () => { closeModal(); render(); });
+// Синхронизация между вкладками (например, чат в двух окнах под разными аккаунтами)
+window.addEventListener('storage', e => {
+  if (e.key !== DB_KEY && e.key !== SES_KEY) return;
+  db = load();
+  const a = document.activeElement;
+  if (a && a.matches('input, textarea, select') && a.value) { renderHeader(); return; }
+  render(true);
+});
+
+db = load();
+render();
+</script>
 </body>
 </html>
